@@ -1,0 +1,368 @@
+(* ::Package:: *)
+
+(* ::Code::Initialization::Plain:: *)
+(* Wolfram Language package *)
+
+(* Author: ShungHong Li *)
+
+
+(* ::Code::Initialization::Plain:: *)
+Fourquarkd10type0::usage="Fourquarkd10type0[q_,{v1_,v2_,{a1_,b1_,c1_,d1_}},{v3_,v4_,{a2_,b2_,c2_,d2_}}] gives the \[InvisibleComma]\[LeftAngleBracket]\!\(\*OverscriptBox[\(\[Psi]\), \(_\)]\)\[Psi]\!\(\*SuperscriptBox[\(\[RightAngleBracket]\), \(2\)]\)\[LeftAngleBracket]GG\[RightAngleBracket] contribution of OPE result about <J1 J2>, with J1=\!\(\*SubscriptBox[OverscriptBox[\(\[CapitalPsi]\), \(_\)], \(a1\)]\)\!\(\*SubscriptBox[\(v1\[CapitalPsi]\), \(b1\)]\)\!\(\*SubscriptBox[OverscriptBox[\(\[CapitalPsi]\), \(_\)], \(c1\)]\)\!\(\*SubscriptBox[\(v2\[CapitalPsi]\), \(d1\)]\) and J2=\!\(\*SubscriptBox[OverscriptBox[\(\[CapitalPsi]\), \(_\)], \(b2\)]\)\!\(\*SubscriptBox[\(v3\[CapitalPsi]\), \(a2\)]\)\!\(\*SubscriptBox[OverscriptBox[\(\[CapitalPsi]\), \(_\)], \(d2\)]\)\!\(\*SubscriptBox[\(v4\[CapitalPsi]\), \(c2\)]\), here the background gluon comes from quark propatator. "
+
+Fourquarkd10type0::inderr="Dummy indices conflict!"
+
+Fourquarkd10type0::curerr="Unknow current structure!"
+
+
+
+(* ::Code::Initialization::Plain:: *)
+Begin["`Private`Fourquarkd10type0`"]
+
+
+(* ::Code::Initialization::Plain:: *)
+Options[Fourquarkd10type0] = {
+	Parallelized->True,
+	HoldFlavor->False,
+	AutoNDR->True,
+	ToD4->"Auto"
+}
+
+
+(* ::Code::Initialization::Plain:: *)
+(* VS-first *)
+
+
+(* ::Code::Initialization::Plain:: *)
+(*------------------------------------------------------------------*)
+(* propagators *)
+
+(* xprop[x_]=FourierPX[prop[q],{q,x}]; *)
+xprop[x_]= 1/2 I^(1-D) \[Pi]^(-D/2) DiracGamma[Momentum[x,D],D] Pair[Momentum[x,D],Momentum[x,D]]^(-D/2) qGamma[D/2];
+
+(*  quark propagator with background gluon  *)
+(*  ---<--- q *)
+
+(* x ---<--- 0 *)
+(*xprog[x_,lora_,lorb_,cola_]=FourierPX[prog[q,lora,lorb,cola],{q,x}];*)
+xprog[x_,lora_,lorb_,cola_]= (GAD[lora] . GAD[lorb] . GSD[x] qfact1[1/32 I^(-D) \[Pi]^(-D/2) qGamma[-1+D/2]] SPD[x,x]^(1-D/2) SUNT[cola]
+							+GSD[x] . GAD[lorb] . GAD[lora] qfact1[qfact2[-(1/32) I^(-D) \[Pi]^(-D/2)] qGamma[-1+D/2]] SPD[x,x]^(1-D/2) SUNT[cola]
+							+2 FVD[x,lora] FVD[x,lorb] GSD[x] qfact1[-(1/16) I^(-D) \[Pi]^(-D/2) qGamma[D/2]] SPD[x,x]^(-D/2) SUNT[cola]);
+							
+
+
+(* ::Code::Initialization::Plain:: *)
+Fourquarkd10type0[qq_,{v1_,v2_,{a1_,b1_,c1_,d1_}},{v3_,v4_,{a2_,b2_,c2_,d2_}},OptionsPattern[]]:=Block[{null,tmp,tmp1,tmp2,hv3,hv4,holdf=OptionValue[HoldFlavor],atr,diagrams,fdir,pall,files,dot,setd},
+
+
+(*--- check dummy indices in input ---*)
+If[DummyCheck[v1,v2,v3,v4]==0,
+	Message[Fourquarkd10type0::inderr];
+	Abort[]
+];
+
+
+If[OptionValue[AutoNDR]===True,
+	atr=TR5
+	,
+	atr=TR
+];
+
+
+If[OptionValue[ToD4]==="Auto"||OptionValue[ToD4]===4,
+	setd=4
+,
+	setd=D
+];
+
+
+(* B A^+ B *)
+hv3=v3//ComplexConjugate;
+hv4=v4//ComplexConjugate//FCI;
+(* ComplexConjugate[sigma] will expand the DiracSigma to gamma matrices, recover it to DiracSigma *)
+hv4=(hv4/.Dot->dot)/.(f1_ dot[aa___,DiracGamma[LorentzIndex[lor1_,dim___],dim___],DiracGamma[LorentzIndex[lor2_,dim___],dim___],bb___]+f2_ dot[aa___,DiracGamma[LorentzIndex[lor2_,dim___],dim___],DiracGamma[LorentzIndex[lor1_,dim___],dim___],bb___])/;(f1+f2===0):>-2I f1 dot[aa,DiracSigma[DiracGamma[LorentzIndex[lor1,dim],dim],DiracGamma[LorentzIndex[lor2,dim],dim]],bb];
+hv4=hv4/. {null->1,dot->Dot};
+
+
+diagrams={xtype1,xtype2,xtype3,xtype4,xtype5,xtype6,xtype7,xtype8,xtype9,xtype10};
+
+(*--------------------------------------------*)		
+
+					
+If[DirectoryQ[OptionValue[Parallelized]//ToString],
+	fdir=OptionValue[Parallelized];
+	pall="External"
+,
+	fdir="None";
+	pall=OptionValue[Parallelized]
+];	
+
+
+(*---------------------------------------------------*)
+If[pall===True,
+
+	DistributeDefinitions[qq,v1,v2,a1,b1,c1,d1,a2,b2,c2,d2];
+	
+	tmp=Plus@@WaitAll[ParallelSubmit[{hv3,hv4,holdf,atr,setd},#[qq,{v1,v2,{a1,b1,c1,d1}},{hv3,hv4,{a2,b2,c2,d2}},holdf,atr,setd]]&/@diagrams];
+	QGather[(tmp/.{CA->SUNN,CF->(SUNN^2 - 1)/(2SUNN)})//Expand//SUNSimplify,qq,ShowasTable->False]/.CA-2CF->1/CA
+	
+,
+
+	If[pall==="External",
+	
+		DistributeDefinitions[qq,v1,v2,a1,b1,c1,d1,a2,b2,c2,d2];
+		
+		If[fdir==="None",
+		
+			ParallelSubmit[{hv3,hv4,holdf,atr,setd},#[qq,{v1,v2,{a1,b1,c1,d1}},{hv3,hv4,{a2,b2,c2,d2}},holdf,atr,setd]]&/@diagrams
+		,
+		
+			files=(StringSplit[ToString[#],"`"][[-1]])&/@diagrams;
+			files=("Fourquarkd10type0_"<>#)&/@files;
+			
+			ImExport[fdir,
+					files,
+					{{hv3,hv4,holdf,atr,setd},
+					{qq,{v1,v2,{a1,b1,c1,d1}},{hv3,hv4,{a2,b2,c2,d2}},holdf,atr,setd},
+					diagrams}
+					]
+		]
+		(* !!! do not touch tmp before WaitAll[tmp], any function may modifiy the things in EvaluationObject[...] should not be used here. !!! *)
+	,
+	
+	
+		tmp=Plus@@Map[#[qq,{v1,v2,{a1,b1,c1,d1}},{hv3,hv4,{a2,b2,c2,d2}},holdf,atr,setd]&,diagrams];
+		QGather[(tmp/.{CA->SUNN,CF->(SUNN^2 - 1)/(2SUNN)})//Expand//SUNSimplify,qq,ShowasTable->False]/.CA-2CF->1/CA
+	]
+]
+
+]
+
+
+
+(* ::Code::Initialization::Plain:: *)
+(*--- The following are generated by algorithm ---*)
+
+
+(* ::Input::Initialization::Plain:: *)
+xtype1[qq_,{v1_,v2_,{a1_,b1_,c1_,d1_}},{hv3_,hv4_,{a2_,b2_,c2_,d2_}},holdf_,atr_,setd_]:=Block[{x,q,dia1,lor1,lor2,lora,lorb,sun,sun1,sun2,tr,str,contract,dot},
+
+
+ dia1=(Pi*Condensate["gg"]*Condensate[{a1, d1}]*Condensate[{d2, c2}]*contract[tr[str[dot[hv4]]]*tr[str[dot[v2, v1, (-(MTD[lor1, lorb]*MTD[lor2, lora]) + MTD[lor1, lora]*MTD[lor2, lorb])*xprog[x, lora, lorb, sun], hv3, xprog[-x, lor1, lor2, sun]]]]]*FlavorDelta[a2, c1]*FlavorDelta[b1, b2]*FlavorDelta[c2, d2]*FlavorDelta[d1, a1])/(8*CA^3*CF*(-1 + D)*D) - (Pi*Condensate["gg"]*Condensate[{b2, a2}]*Condensate[{c1, d1}]*contract[tr[str[dot[hv3]]]*tr[str[dot[v2]]]*tr[str[dot[hv4, (-(MTD[lor1, lorb]*MTD[lor2, lora]) + MTD[lor1, lora]*MTD[lor2, lorb])*xprog[-x, lora, lorb, sun], v1, xprog[x, lor1, lor2, sun]]]]]*FlavorDelta[a2, b2]*FlavorDelta[b1, d2]*FlavorDelta[c2, a1]*FlavorDelta[d1, c1])/(8*CA^3*CF*(-1 + D)*D) - (Pi*Condensate["gg"]*Condensate[{b2, c2}]*Condensate[{c1, b1}]*contract[tr[str[dot[hv3, (-(MTD[lor1, lorb]*MTD[lor2, lora]) + MTD[lor1, lora]*MTD[lor2, lorb])*xprog[-x, lora, lorb, sun], v1, v2, xprog[x, lor1, lor2, sun], hv4]]]]*FlavorDelta[a2, a1]*FlavorDelta[b1, c1]*FlavorDelta[c2, b2]*FlavorDelta[d1, d2])/(8*CA^3*CF*(-1 + D)*D) + (Pi*Condensate["gg"]*Condensate[{a1, a2}]*Condensate[{c1, c2}]*contract[tr[str[dot[hv3, v1, (-(MTD[lor1, lorb]*MTD[lor2, lora]) + MTD[lor1, lora]*MTD[lor2, lorb])*xprog[x, lora, lorb, sun]]]]*tr[str[dot[hv4, v2, xprog[x, lor1, lor2, sun]]]]]*FlavorDelta[a2, a1]*FlavorDelta[b1, b2]*FlavorDelta[c2, c1]*FlavorDelta[d1, d2])/(8*CA^3*CF*(-1 + D)*D);
+
+
+ If[setd===4,dia1=FCI[dia1]/.dg_DiracGamma:>(dg/.D->4)/.ld_LorentzIndex:>(ld/.D->4)];
+
+
+ dia1=dia1/.{FlavorDelta[fa_,fb_,___]:>FlavorDelta[fa,fb,HoldFlavor->holdf],dot[aa___,1,bb___]:>dot[aa,bb]}/.dot->Dot/.str->SUNTrace/.{tr->atr,contract->Contract}/.sunSimplify->SUNSimplify;
+
+
+ dia1=FourierXP[dia1,{x,q}];
+
+
+ dia1=QEvaluate[I ScaleMu^(1(4-D)) dia1,q,HoldFlavor->holdf,Parallelized->False]/.q->qq/.CA-2CF->1/CA/.{-1+CA^2-2CA CF->0,1-CA^2+2CA CF->0}/.CF->(CA^2-1)/(2CA)
+
+
+]
+
+
+(* ::Input::Initialization::Plain:: *)
+xtype2[qq_,{v1_,v2_,{a1_,b1_,c1_,d1_}},{hv3_,hv4_,{a2_,b2_,c2_,d2_}},holdf_,atr_,setd_]:=Block[{x,q,dia2,lor1,lor2,lora,lorb,sun,sun1,sun2,tr,str,contract,dot},
+
+
+ dia2=-1/8*(Pi*Condensate["gg"]*Condensate[{c1, b1}]*Condensate[{d2, a2}]*contract[tr[str[dot[hv4, (-(MTD[lor1, lorb]*MTD[lor2, lora]) + MTD[lor1, lora]*MTD[lor2, lorb])*xprog[-x, lora, lorb, sun], v1, v2, xprog[x, lor1, lor2, sun], hv3]]]]*FlavorDelta[a2, d2]*FlavorDelta[b1, c1]*FlavorDelta[c2, a1]*FlavorDelta[d1, b2])/(CA^3*CF*(-1 + D)*D) + (Pi*Condensate["gg"]*Condensate[{a1, b1}]*Condensate[{d2, a2}]*contract[tr[str[dot[v1]]]*tr[str[dot[hv4, (-(MTD[lor1, lorb]*MTD[lor2, lora]) + MTD[lor1, lora]*MTD[lor2, lorb])*xprog[-x, lora, lorb, sun], v2, xprog[x, lor1, lor2, sun], hv3]]]]*FlavorDelta[a2, d2]*FlavorDelta[b1, a1]*FlavorDelta[c2, c1]*FlavorDelta[d1, b2])/(8*CA^3*CF*(-1 + D)*D) + (Pi*Condensate["gg"]*Condensate[{b2, c2}]*Condensate[{c1, d1}]*contract[tr[str[dot[v2]]]*tr[str[dot[hv3, (-(MTD[lor1, lorb]*MTD[lor2, lora]) + MTD[lor1, lora]*MTD[lor2, lorb])*xprog[-x, lora, lorb, sun], v1, xprog[x, lor1, lor2, sun], hv4]]]]*FlavorDelta[a2, a1]*FlavorDelta[b1, d2]*FlavorDelta[c2, b2]*FlavorDelta[d1, c1])/(8*CA^3*CF*(-1 + D)*D) + (Pi*Condensate["gg"]*Condensate[{b2, a2}]*Condensate[{c1, b1}]*contract[tr[str[dot[hv3]]]*tr[str[dot[hv4, (-(MTD[lor1, lorb]*MTD[lor2, lora]) + MTD[lor1, lora]*MTD[lor2, lorb])*xprog[-x, lora, lorb, sun], v1, v2, xprog[x, lor1, lor2, sun]]]]]*FlavorDelta[a2, b2]*FlavorDelta[b1, c1]*FlavorDelta[c2, a1]*FlavorDelta[d1, d2])/(8*CA^3*CF*(-1 + D)*D);
+
+
+ If[setd===4,dia2=FCI[dia2]/.dg_DiracGamma:>(dg/.D->4)/.ld_LorentzIndex:>(ld/.D->4)];
+
+
+ dia2=dia2/.{FlavorDelta[fa_,fb_,___]:>FlavorDelta[fa,fb,HoldFlavor->holdf],dot[aa___,1,bb___]:>dot[aa,bb]}/.dot->Dot/.str->SUNTrace/.{tr->atr,contract->Contract}/.sunSimplify->SUNSimplify;
+
+
+ dia2=FourierXP[dia2,{x,q}];
+
+
+ dia2=QEvaluate[I ScaleMu^(1(4-D)) dia2,q,HoldFlavor->holdf,Parallelized->False]/.q->qq/.CA-2CF->1/CA/.{-1+CA^2-2CA CF->0,1-CA^2+2CA CF->0}/.CF->(CA^2-1)/(2CA)
+
+
+]
+
+
+(* ::Input::Initialization::Plain:: *)
+xtype3[qq_,{v1_,v2_,{a1_,b1_,c1_,d1_}},{hv3_,hv4_,{a2_,b2_,c2_,d2_}},holdf_,atr_,setd_]:=Block[{x,q,dia3,lor1,lor2,lora,lorb,sun,sun1,sun2,tr,str,contract,dot},
+
+
+ dia3=-1/8*(Pi*Condensate["gg"]*Condensate[{a1, a2}]*Condensate[{c1, c2}]*contract[tr[str[dot[hv3, v1, (-(MTD[lor1, lorb]*MTD[lor2, lora]) + MTD[lor1, lora]*MTD[lor2, lorb])*xprog[x, lora, lorb, sun], hv4, v2, xprog[x, lor1, lor2, sun]]]]]*FlavorDelta[a2, a1]*FlavorDelta[b1, d2]*FlavorDelta[c2, c1]*FlavorDelta[d1, b2])/(CA^3*CF*(-1 + D)*D) - (Pi*Condensate["gg"]*Condensate[{b2, d1}]*Condensate[{c1, c2}]*contract[tr[str[dot[hv3, (-(MTD[lor1, lorb]*MTD[lor2, lora]) + MTD[lor1, lora]*MTD[lor2, lorb])*xprog[-x, lora, lorb, sun], v1, xprog[x, lor1, lor2, sun], hv4, v2]]]]*FlavorDelta[a2, a1]*FlavorDelta[b1, d2]*FlavorDelta[c2, c1]*FlavorDelta[d1, b2])/(8*CA^3*CF*(-1 + D)*D) - (Pi*Condensate["gg"]*Condensate[{c1, a2}]*Condensate[{d2, d1}]*contract[tr[str[dot[hv4, (-(MTD[lor1, lorb]*MTD[lor2, lora]) + MTD[lor1, lora]*MTD[lor2, lorb])*xprog[-x, lora, lorb, sun], v1, xprog[x, lor1, lor2, sun], hv3, v2]]]]*FlavorDelta[a2, c1]*FlavorDelta[b1, b2]*FlavorDelta[c2, a1]*FlavorDelta[d1, d2])/(8*CA^3*CF*(-1 + D)*D) - (Pi*Condensate["gg"]*Condensate[{a1, b1}]*Condensate[{b2, a2}]*contract[tr[str[dot[hv3]]]*tr[str[dot[v1]]]*tr[str[dot[hv4, (-(MTD[lor1, lorb]*MTD[lor2, lora]) + MTD[lor1, lora]*MTD[lor2, lorb])*xprog[-x, lora, lorb, sun], v2, xprog[x, lor1, lor2, sun]]]]]*FlavorDelta[a2, b2]*FlavorDelta[b1, a1]*FlavorDelta[c2, c1]*FlavorDelta[d1, d2])/(8*CA^3*CF*(-1 + D)*D);
+
+
+ If[setd===4,dia3=FCI[dia3]/.dg_DiracGamma:>(dg/.D->4)/.ld_LorentzIndex:>(ld/.D->4)];
+
+
+ dia3=dia3/.{FlavorDelta[fa_,fb_,___]:>FlavorDelta[fa,fb,HoldFlavor->holdf],dot[aa___,1,bb___]:>dot[aa,bb]}/.dot->Dot/.str->SUNTrace/.{tr->atr,contract->Contract}/.sunSimplify->SUNSimplify;
+
+
+ dia3=FourierXP[dia3,{x,q}];
+
+
+ dia3=QEvaluate[I ScaleMu^(1(4-D)) dia3,q,HoldFlavor->holdf,Parallelized->False]/.q->qq/.CA-2CF->1/CA/.{-1+CA^2-2CA CF->0,1-CA^2+2CA CF->0}/.CF->(CA^2-1)/(2CA)
+
+
+]
+
+
+(* ::Input::Initialization::Plain:: *)
+xtype4[qq_,{v1_,v2_,{a1_,b1_,c1_,d1_}},{hv3_,hv4_,{a2_,b2_,c2_,d2_}},holdf_,atr_,setd_]:=Block[{x,q,dia4,lor1,lor2,lora,lorb,sun,sun1,sun2,tr,str,contract,dot},
+
+
+ dia4=-1/8*(Pi*Condensate["gg"]*Condensate[{a1, a2}]*Condensate[{d2, b1}]*contract[tr[str[dot[hv3, v1, hv4, (-(MTD[lor1, lorb]*MTD[lor2, lora]) + MTD[lor1, lora]*MTD[lor2, lorb])*xprog[-x, lora, lorb, sun], v2, xprog[x, lor1, lor2, sun]]]]]*FlavorDelta[a2, a1]*FlavorDelta[b1, d2]*FlavorDelta[c2, c1]*FlavorDelta[d1, b2])/(CA^3*CF*(-1 + D)*D) - (Pi*Condensate["gg"]*Condensate[{a1, a2}]*Condensate[{b2, d1}]*contract[tr[str[dot[hv3, v1, (-(MTD[lor1, lorb]*MTD[lor2, lora]) + MTD[lor1, lora]*MTD[lor2, lorb])*xprog[x, lora, lorb, sun], hv4, xprog[-x, lor1, lor2, sun], v2]]]]*FlavorDelta[a2, a1]*FlavorDelta[b1, d2]*FlavorDelta[c2, c1]*FlavorDelta[d1, b2])/(8*CA^3*CF*(-1 + D)*D) - (Pi*Condensate["gg"]*Condensate[{a1, c2}]*Condensate[{b2, b1}]*contract[tr[str[dot[hv4, v1, hv3, (-(MTD[lor1, lorb]*MTD[lor2, lora]) + MTD[lor1, lora]*MTD[lor2, lorb])*xprog[-x, lora, lorb, sun], v2, xprog[x, lor1, lor2, sun]]]]]*FlavorDelta[a2, c1]*FlavorDelta[b1, b2]*FlavorDelta[c2, a1]*FlavorDelta[d1, d2])/(8*CA^3*CF*(-1 + D)*D) + (Pi*Condensate["gg"]*Condensate[{b2, b1}]*Condensate[{c1, c2}]*contract[tr[str[dot[hv3, (-(MTD[lor1, lorb]*MTD[lor2, lora]) + MTD[lor1, lora]*MTD[lor2, lorb])*xprog[-x, lora, lorb, sun], v1]]]*tr[str[dot[hv4, v2, xprog[x, lor1, lor2, sun]]]]]*FlavorDelta[a2, a1]*FlavorDelta[b1, b2]*FlavorDelta[c2, c1]*FlavorDelta[d1, d2])/(8*CA^3*CF*(-1 + D)*D);
+
+
+ If[setd===4,dia4=FCI[dia4]/.dg_DiracGamma:>(dg/.D->4)/.ld_LorentzIndex:>(ld/.D->4)];
+
+
+ dia4=dia4/.{FlavorDelta[fa_,fb_,___]:>FlavorDelta[fa,fb,HoldFlavor->holdf],dot[aa___,1,bb___]:>dot[aa,bb]}/.dot->Dot/.str->SUNTrace/.{tr->atr,contract->Contract}/.sunSimplify->SUNSimplify;
+
+
+ dia4=FourierXP[dia4,{x,q}];
+
+
+ dia4=QEvaluate[I ScaleMu^(1(4-D)) dia4,q,HoldFlavor->holdf,Parallelized->False]/.q->qq/.CA-2CF->1/CA/.{-1+CA^2-2CA CF->0,1-CA^2+2CA CF->0}/.CF->(CA^2-1)/(2CA)
+
+
+]
+
+
+(* ::Input::Initialization::Plain:: *)
+xtype5[qq_,{v1_,v2_,{a1_,b1_,c1_,d1_}},{hv3_,hv4_,{a2_,b2_,c2_,d2_}},holdf_,atr_,setd_]:=Block[{x,q,dia5,lor1,lor2,lora,lorb,sun,sun1,sun2,tr,str,contract,dot},
+
+
+ dia5=(Pi*Condensate["gg"]*Condensate[{b2, d1}]*Condensate[{d2, b1}]*contract[tr[str[dot[hv3, xprog[-x, lor1, lor2, sun], v2]]]*tr[str[dot[hv4, (-(MTD[lor1, lorb]*MTD[lor2, lora]) + MTD[lor1, lora]*MTD[lor2, lorb])*xprog[-x, lora, lorb, sun], v1]]]]*FlavorDelta[a2, c1]*FlavorDelta[b1, d2]*FlavorDelta[c2, a1]*FlavorDelta[d1, b2])/(8*CA^3*CF*(-1 + D)*D) - (Pi*Condensate["gg"]*Condensate[{a1, b1}]*Condensate[{d2, c2}]*contract[tr[str[dot[hv4]]]*tr[str[dot[v1]]]*tr[str[dot[hv3, (-(MTD[lor1, lorb]*MTD[lor2, lora]) + MTD[lor1, lora]*MTD[lor2, lorb])*xprog[-x, lora, lorb, sun], v2, xprog[x, lor1, lor2, sun]]]]]*FlavorDelta[a2, c1]*FlavorDelta[b1, a1]*FlavorDelta[c2, d2]*FlavorDelta[d1, b2])/(8*CA^3*CF*(-1 + D)*D) - (Pi*Condensate["gg"]*Condensate[{c1, d1}]*Condensate[{d2, c2}]*contract[tr[str[dot[hv4]]]*tr[str[dot[v2]]]*tr[str[dot[hv3, (-(MTD[lor1, lorb]*MTD[lor2, lora]) + MTD[lor1, lora]*MTD[lor2, lorb])*xprog[-x, lora, lorb, sun], v1, xprog[x, lor1, lor2, sun]]]]]*FlavorDelta[a2, a1]*FlavorDelta[b1, b2]*FlavorDelta[c2, d2]*FlavorDelta[d1, c1])/(8*CA^3*CF*(-1 + D)*D) + (Pi*Condensate["gg"]*Condensate[{a1, b1}]*Condensate[{b2, c2}]*contract[tr[str[dot[v1]]]*tr[str[dot[hv3, (-(MTD[lor1, lorb]*MTD[lor2, lora]) + MTD[lor1, lora]*MTD[lor2, lorb])*xprog[-x, lora, lorb, sun], v2, xprog[x, lor1, lor2, sun], hv4]]]]*FlavorDelta[a2, c1]*FlavorDelta[b1, a1]*FlavorDelta[c2, b2]*FlavorDelta[d1, d2])/(8*CA^3*CF*(-1 + D)*D);
+
+
+ If[setd===4,dia5=FCI[dia5]/.dg_DiracGamma:>(dg/.D->4)/.ld_LorentzIndex:>(ld/.D->4)];
+
+
+ dia5=dia5/.{FlavorDelta[fa_,fb_,___]:>FlavorDelta[fa,fb,HoldFlavor->holdf],dot[aa___,1,bb___]:>dot[aa,bb]}/.dot->Dot/.str->SUNTrace/.{tr->atr,contract->Contract}/.sunSimplify->SUNSimplify;
+
+
+ dia5=FourierXP[dia5,{x,q}];
+
+
+ dia5=QEvaluate[I ScaleMu^(1(4-D)) dia5,q,HoldFlavor->holdf,Parallelized->False]/.q->qq/.CA-2CF->1/CA/.{-1+CA^2-2CA CF->0,1-CA^2+2CA CF->0}/.CF->(CA^2-1)/(2CA)
+
+
+]
+
+
+(* ::Input::Initialization::Plain:: *)
+xtype6[qq_,{v1_,v2_,{a1_,b1_,c1_,d1_}},{hv3_,hv4_,{a2_,b2_,c2_,d2_}},holdf_,atr_,setd_]:=Block[{x,q,dia6,lor1,lor2,lora,lorb,sun,sun1,sun2,tr,str,contract,dot},
+
+
+ dia6=(Pi*Condensate["gg"]*Condensate[{a1, c2}]*Condensate[{b2, d1}]*contract[tr[str[dot[hv3, xprog[-x, lor1, lor2, sun], v2]]]*tr[str[dot[hv4, v1, (-(MTD[lor1, lorb]*MTD[lor2, lora]) + MTD[lor1, lora]*MTD[lor2, lorb])*xprog[x, lora, lorb, sun]]]]]*FlavorDelta[a2, c1]*FlavorDelta[b1, d2]*FlavorDelta[c2, a1]*FlavorDelta[d1, b2])/(8*CA^3*CF*(-1 + D)*D) + (Pi*Condensate["gg"]*Condensate[{c1, a2}]*Condensate[{d2, b1}]*contract[tr[str[dot[hv3, v2, xprog[x, lor1, lor2, sun]]]]*tr[str[dot[hv4, (-(MTD[lor1, lorb]*MTD[lor2, lora]) + MTD[lor1, lora]*MTD[lor2, lorb])*xprog[-x, lora, lorb, sun], v1]]]]*FlavorDelta[a2, c1]*FlavorDelta[b1, d2]*FlavorDelta[c2, a1]*FlavorDelta[d1, b2])/(8*CA^3*CF*(-1 + D)*D) + (Pi*Condensate["gg"]*Condensate[{c1, d1}]*Condensate[{d2, a2}]*contract[tr[str[dot[v2]]]*tr[str[dot[hv4, (-(MTD[lor1, lorb]*MTD[lor2, lora]) + MTD[lor1, lora]*MTD[lor2, lorb])*xprog[-x, lora, lorb, sun], v1, xprog[x, lor1, lor2, sun], hv3]]]]*FlavorDelta[a2, d2]*FlavorDelta[b1, b2]*FlavorDelta[c2, a1]*FlavorDelta[d1, c1])/(8*CA^3*CF*(-1 + D)*D) + (Pi*Condensate["gg"]*Condensate[{a1, a2}]*Condensate[{b2, b1}]*contract[tr[str[dot[hv3, v1]]]*tr[str[dot[hv4, (-(MTD[lor1, lorb]*MTD[lor2, lora]) + MTD[lor1, lora]*MTD[lor2, lorb])*xprog[-x, lora, lorb, sun], v2, xprog[x, lor1, lor2, sun]]]]]*FlavorDelta[a2, a1]*FlavorDelta[b1, b2]*FlavorDelta[c2, c1]*FlavorDelta[d1, d2])/(8*CA^3*CF*(-1 + D)*D);
+
+
+ If[setd===4,dia6=FCI[dia6]/.dg_DiracGamma:>(dg/.D->4)/.ld_LorentzIndex:>(ld/.D->4)];
+
+
+ dia6=dia6/.{FlavorDelta[fa_,fb_,___]:>FlavorDelta[fa,fb,HoldFlavor->holdf],dot[aa___,1,bb___]:>dot[aa,bb]}/.dot->Dot/.str->SUNTrace/.{tr->atr,contract->Contract}/.sunSimplify->SUNSimplify;
+
+
+ dia6=FourierXP[dia6,{x,q}];
+
+
+ dia6=QEvaluate[I ScaleMu^(1(4-D)) dia6,q,HoldFlavor->holdf,Parallelized->False]/.q->qq/.CA-2CF->1/CA/.{-1+CA^2-2CA CF->0,1-CA^2+2CA CF->0}/.CF->(CA^2-1)/(2CA)
+
+
+]
+
+
+(* ::Input::Initialization::Plain:: *)
+xtype7[qq_,{v1_,v2_,{a1_,b1_,c1_,d1_}},{hv3_,hv4_,{a2_,b2_,c2_,d2_}},holdf_,atr_,setd_]:=Block[{x,q,dia7,lor1,lor2,lora,lorb,sun,sun1,sun2,tr,str,contract,dot},
+
+
+ dia7=-1/8*(Pi*Condensate["gg"]*Condensate[{b2, d1}]*Condensate[{d2, b1}]*contract[tr[str[dot[hv3, (-(MTD[lor1, lorb]*MTD[lor2, lora]) + MTD[lor1, lora]*MTD[lor2, lorb])*xprog[-x, lora, lorb, sun], v1, hv4, xprog[-x, lor1, lor2, sun], v2]]]]*FlavorDelta[a2, a1]*FlavorDelta[b1, d2]*FlavorDelta[c2, c1]*FlavorDelta[d1, b2])/(CA^3*CF*(-1 + D)*D) - (Pi*Condensate["gg"]*Condensate[{a1, c2}]*Condensate[{c1, a2}]*contract[tr[str[dot[hv4, v1, (-(MTD[lor1, lorb]*MTD[lor2, lora]) + MTD[lor1, lora]*MTD[lor2, lorb])*xprog[x, lora, lorb, sun], hv3, v2, xprog[x, lor1, lor2, sun]]]]]*FlavorDelta[a2, c1]*FlavorDelta[b1, b2]*FlavorDelta[c2, a1]*FlavorDelta[d1, d2])/(8*CA^3*CF*(-1 + D)*D) - (Pi*Condensate["gg"]*Condensate[{b2, b1}]*Condensate[{d2, d1}]*contract[tr[str[dot[hv4, (-(MTD[lor1, lorb]*MTD[lor2, lora]) + MTD[lor1, lora]*MTD[lor2, lorb])*xprog[-x, lora, lorb, sun], v1, hv3, xprog[-x, lor1, lor2, sun], v2]]]]*FlavorDelta[a2, c1]*FlavorDelta[b1, b2]*FlavorDelta[c2, a1]*FlavorDelta[d1, d2])/(8*CA^3*CF*(-1 + D)*D) + (Pi*Condensate["gg"]*Condensate[{a1, a2}]*Condensate[{d2, d1}]*contract[tr[str[dot[hv3, v1, (-(MTD[lor1, lorb]*MTD[lor2, lora]) + MTD[lor1, lora]*MTD[lor2, lorb])*xprog[x, lora, lorb, sun]]]]*tr[str[dot[hv4, xprog[-x, lor1, lor2, sun], v2]]]]*FlavorDelta[a2, a1]*FlavorDelta[b1, b2]*FlavorDelta[c2, c1]*FlavorDelta[d1, d2])/(8*CA^3*CF*(-1 + D)*D);
+
+
+ If[setd===4,dia7=FCI[dia7]/.dg_DiracGamma:>(dg/.D->4)/.ld_LorentzIndex:>(ld/.D->4)];
+
+
+ dia7=dia7/.{FlavorDelta[fa_,fb_,___]:>FlavorDelta[fa,fb,HoldFlavor->holdf],dot[aa___,1,bb___]:>dot[aa,bb]}/.dot->Dot/.str->SUNTrace/.{tr->atr,contract->Contract}/.sunSimplify->SUNSimplify;
+
+
+ dia7=FourierXP[dia7,{x,q}];
+
+
+ dia7=QEvaluate[I ScaleMu^(1(4-D)) dia7,q,HoldFlavor->holdf,Parallelized->False]/.q->qq/.CA-2CF->1/CA/.{-1+CA^2-2CA CF->0,1-CA^2+2CA CF->0}/.CF->(CA^2-1)/(2CA)
+
+
+]
+
+
+(* ::Input::Initialization::Plain:: *)
+xtype8[qq_,{v1_,v2_,{a1_,b1_,c1_,d1_}},{hv3_,hv4_,{a2_,b2_,c2_,d2_}},holdf_,atr_,setd_]:=Block[{x,q,dia8,lor1,lor2,lora,lorb,sun,sun1,sun2,tr,str,contract,dot},
+
+
+ dia8=(Pi*Condensate["gg"]*Condensate[{a1, c2}]*Condensate[{c1, a2}]*contract[tr[str[dot[hv3, v2, xprog[x, lor1, lor2, sun]]]]*tr[str[dot[hv4, v1, (-(MTD[lor1, lorb]*MTD[lor2, lora]) + MTD[lor1, lora]*MTD[lor2, lorb])*xprog[x, lora, lorb, sun]]]]]*FlavorDelta[a2, c1]*FlavorDelta[b1, d2]*FlavorDelta[c2, a1]*FlavorDelta[d1, b2])/(8*CA^3*CF*(-1 + D)*D) + (Pi*Condensate["gg"]*Condensate[{b2, d1}]*Condensate[{c1, a2}]*contract[tr[str[dot[hv3, v2]]]*tr[str[dot[hv4, (-(MTD[lor1, lorb]*MTD[lor2, lora]) + MTD[lor1, lora]*MTD[lor2, lorb])*xprog[-x, lora, lorb, sun], v1, xprog[x, lor1, lor2, sun]]]]]*FlavorDelta[a2, c1]*FlavorDelta[b1, d2]*FlavorDelta[c2, a1]*FlavorDelta[d1, b2])/(8*CA^3*CF*(-1 + D)*D) - (Pi*Condensate["gg"]*Condensate[{a1, c2}]*Condensate[{d2, d1}]*contract[tr[str[dot[hv4, v1, (-(MTD[lor1, lorb]*MTD[lor2, lora]) + MTD[lor1, lora]*MTD[lor2, lorb])*xprog[x, lora, lorb, sun], hv3, xprog[-x, lor1, lor2, sun], v2]]]]*FlavorDelta[a2, c1]*FlavorDelta[b1, b2]*FlavorDelta[c2, a1]*FlavorDelta[d1, d2])/(8*CA^3*CF*(-1 + D)*D) + (Pi*Condensate["gg"]*Condensate[{c1, c2}]*Condensate[{d2, d1}]*contract[tr[str[dot[hv4, v2]]]*tr[str[dot[hv3, (-(MTD[lor1, lorb]*MTD[lor2, lora]) + MTD[lor1, lora]*MTD[lor2, lorb])*xprog[-x, lora, lorb, sun], v1, xprog[x, lor1, lor2, sun]]]]]*FlavorDelta[a2, a1]*FlavorDelta[b1, b2]*FlavorDelta[c2, c1]*FlavorDelta[d1, d2])/(8*CA^3*CF*(-1 + D)*D);
+
+
+ If[setd===4,dia8=FCI[dia8]/.dg_DiracGamma:>(dg/.D->4)/.ld_LorentzIndex:>(ld/.D->4)];
+
+
+ dia8=dia8/.{FlavorDelta[fa_,fb_,___]:>FlavorDelta[fa,fb,HoldFlavor->holdf],dot[aa___,1,bb___]:>dot[aa,bb]}/.dot->Dot/.str->SUNTrace/.{tr->atr,contract->Contract}/.sunSimplify->SUNSimplify;
+
+
+ dia8=FourierXP[dia8,{x,q}];
+
+
+ dia8=QEvaluate[I ScaleMu^(1(4-D)) dia8,q,HoldFlavor->holdf,Parallelized->False]/.q->qq/.CA-2CF->1/CA/.{-1+CA^2-2CA CF->0,1-CA^2+2CA CF->0}/.CF->(CA^2-1)/(2CA)
+
+
+]
+
+
+(* ::Input::Initialization::Plain:: *)
+xtype9[qq_,{v1_,v2_,{a1_,b1_,c1_,d1_}},{hv3_,hv4_,{a2_,b2_,c2_,d2_}},holdf_,atr_,setd_]:=Block[{x,q,dia9,lor1,lor2,lora,lorb,sun,sun1,sun2,tr,str,contract,dot},
+
+
+ dia9=(Pi*Condensate["gg"]*Condensate[{a1, d1}]*Condensate[{b2, a2}]*contract[tr[str[dot[hv3]]]*tr[str[dot[v2, v1, (-(MTD[lor1, lorb]*MTD[lor2, lora]) + MTD[lor1, lora]*MTD[lor2, lorb])*xprog[x, lora, lorb, sun], hv4, xprog[-x, lor1, lor2, sun]]]]]*FlavorDelta[a2, b2]*FlavorDelta[b1, d2]*FlavorDelta[c2, c1]*FlavorDelta[d1, a1])/(8*CA^3*CF*(-1 + D)*D) + (Pi*Condensate["gg"]*Condensate[{a1, c2}]*Condensate[{d2, b1}]*contract[tr[str[dot[hv4, v1]]]*tr[str[dot[hv3, (-(MTD[lor1, lorb]*MTD[lor2, lora]) + MTD[lor1, lora]*MTD[lor2, lorb])*xprog[-x, lora, lorb, sun], v2, xprog[x, lor1, lor2, sun]]]]]*FlavorDelta[a2, c1]*FlavorDelta[b1, d2]*FlavorDelta[c2, a1]*FlavorDelta[d1, b2])/(8*CA^3*CF*(-1 + D)*D) - (Pi*Condensate["gg"]*Condensate[{b2, b1}]*Condensate[{c1, a2}]*contract[tr[str[dot[hv4, (-(MTD[lor1, lorb]*MTD[lor2, lora]) + MTD[lor1, lora]*MTD[lor2, lorb])*xprog[-x, lora, lorb, sun], v1, hv3, v2, xprog[x, lor1, lor2, sun]]]]]*FlavorDelta[a2, c1]*FlavorDelta[b1, b2]*FlavorDelta[c2, a1]*FlavorDelta[d1, d2])/(8*CA^3*CF*(-1 + D)*D) + (Pi*Condensate["gg"]*Condensate[{b2, b1}]*Condensate[{d2, d1}]*contract[tr[str[dot[hv3, (-(MTD[lor1, lorb]*MTD[lor2, lora]) + MTD[lor1, lora]*MTD[lor2, lorb])*xprog[-x, lora, lorb, sun], v1]]]*tr[str[dot[hv4, xprog[-x, lor1, lor2, sun], v2]]]]*FlavorDelta[a2, a1]*FlavorDelta[b1, b2]*FlavorDelta[c2, c1]*FlavorDelta[d1, d2])/(8*CA^3*CF*(-1 + D)*D);
+
+
+ If[setd===4,dia9=FCI[dia9]/.dg_DiracGamma:>(dg/.D->4)/.ld_LorentzIndex:>(ld/.D->4)];
+
+
+ dia9=dia9/.{FlavorDelta[fa_,fb_,___]:>FlavorDelta[fa,fb,HoldFlavor->holdf],dot[aa___,1,bb___]:>dot[aa,bb]}/.dot->Dot/.str->SUNTrace/.{tr->atr,contract->Contract}/.sunSimplify->SUNSimplify;
+
+
+ dia9=FourierXP[dia9,{x,q}];
+
+
+ dia9=QEvaluate[I ScaleMu^(1(4-D)) dia9,q,HoldFlavor->holdf,Parallelized->False]/.q->qq/.CA-2CF->1/CA/.{-1+CA^2-2CA CF->0,1-CA^2+2CA CF->0}/.CF->(CA^2-1)/(2CA)
+
+
+]
+
+
+(* ::Input::Initialization::Plain:: *)
+xtype10[qq_,{v1_,v2_,{a1_,b1_,c1_,d1_}},{hv3_,hv4_,{a2_,b2_,c2_,d2_}},holdf_,atr_,setd_]:=Block[{x,q,dia10,lor1,lor2,lora,lorb,sun,sun1,sun2,tr,str,contract,dot},
+
+
+ dia10=-1/8*(Pi*Condensate["gg"]*Condensate[{a1, d1}]*Condensate[{b2, c2}]*contract[tr[str[dot[hv3, xprog[-x, lor1, lor2, sun], v2, v1, (-(MTD[lor1, lorb]*MTD[lor2, lora]) + MTD[lor1, lora]*MTD[lor2, lorb])*xprog[x, lora, lorb, sun], hv4]]]]*FlavorDelta[a2, c1]*FlavorDelta[b1, d2]*FlavorDelta[c2, b2]*FlavorDelta[d1, a1])/(CA^3*CF*(-1 + D)*D) - (Pi*Condensate["gg"]*Condensate[{a1, d1}]*Condensate[{d2, a2}]*contract[tr[str[dot[hv4, xprog[-x, lor1, lor2, sun], v2, v1, (-(MTD[lor1, lorb]*MTD[lor2, lora]) + MTD[lor1, lora]*MTD[lor2, lorb])*xprog[x, lora, lorb, sun], hv3]]]]*FlavorDelta[a2, d2]*FlavorDelta[b1, b2]*FlavorDelta[c2, c1]*FlavorDelta[d1, a1])/(8*CA^3*CF*(-1 + D)*D) - (Pi*Condensate["gg"]*Condensate[{c1, c2}]*Condensate[{d2, b1}]*contract[tr[str[dot[hv3, (-(MTD[lor1, lorb]*MTD[lor2, lora]) + MTD[lor1, lora]*MTD[lor2, lorb])*xprog[-x, lora, lorb, sun], v1, hv4, v2, xprog[x, lor1, lor2, sun]]]]]*FlavorDelta[a2, a1]*FlavorDelta[b1, d2]*FlavorDelta[c2, c1]*FlavorDelta[d1, b2])/(8*CA^3*CF*(-1 + D)*D) + (Pi*Condensate["gg"]*Condensate[{c1, b1}]*Condensate[{d2, c2}]*contract[tr[str[dot[hv4]]]*tr[str[dot[hv3, (-(MTD[lor1, lorb]*MTD[lor2, lora]) + MTD[lor1, lora]*MTD[lor2, lorb])*xprog[-x, lora, lorb, sun], v1, v2, xprog[x, lor1, lor2, sun]]]]]*FlavorDelta[a2, a1]*FlavorDelta[b1, c1]*FlavorDelta[c2, d2]*FlavorDelta[d1, b2])/(8*CA^3*CF*(-1 + D)*D);
+
+
+ If[setd===4,dia10=FCI[dia10]/.dg_DiracGamma:>(dg/.D->4)/.ld_LorentzIndex:>(ld/.D->4)];
+
+
+ dia10=dia10/.{FlavorDelta[fa_,fb_,___]:>FlavorDelta[fa,fb,HoldFlavor->holdf],dot[aa___,1,bb___]:>dot[aa,bb]}/.dot->Dot/.str->SUNTrace/.{tr->atr,contract->Contract}/.sunSimplify->SUNSimplify;
+
+
+ dia10=FourierXP[dia10,{x,q}];
+
+
+ dia10=QEvaluate[I ScaleMu^(1(4-D)) dia10,q,HoldFlavor->holdf,Parallelized->False]/.q->qq/.CA-2CF->1/CA/.{-1+CA^2-2CA CF->0,1-CA^2+2CA CF->0}/.CF->(CA^2-1)/(2CA)
+
+
+]
+
+
+(* ::Code::Initialization::Plain:: *)
+End[]
+(*EndPackage[]*)

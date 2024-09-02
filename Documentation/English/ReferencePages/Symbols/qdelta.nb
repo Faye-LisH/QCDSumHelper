@@ -1,0 +1,254 @@
+(* Content-type: application/vnd.wolfram.mathematica *)
+
+(*** Wolfram Notebook File ***)
+(* http://www.wolfram.com/nb *)
+
+(* CreatedBy='Mathematica 12.1' *)
+
+(*CacheID: 234*)
+(* Internal cache information:
+NotebookFileLineBreakTest
+NotebookFileLineBreakTest
+NotebookDataPosition[       158,          7]
+NotebookDataLength[      8208,        245]
+NotebookOptionsPosition[      5670,        186]
+NotebookOutlinePosition[      7513,        234]
+CellTagsIndexPosition[      7470,        231]
+WindowTitle->qdelta
+WindowFrame->Normal*)
+
+(* Beginning of Notebook Content *)
+Notebook[{
+Cell[BoxData[GridBox[{
+   {Cell["Q S S R HELPER SYMBOL", "PacletNameCell"], Cell[TextData[Cell[
+    BoxData[
+     ActionMenuBox[
+      FrameBox[
+       InterpretationBox[Cell[TextData[{
+         "URL",
+         StyleBox[" \[FilledDownTriangle]", "AnchorBarArrow",
+          StripOnInput->False]
+        }]],
+        TextCell[
+         Row[{"URL", 
+           Style[" \[FilledDownTriangle]", "AnchorBarArrow"]}]]],
+       StripOnInput->False], {"\<\"QSSRHelper/ref/qdelta\"\>":>
+      None, "\<\"Copy Wolfram Documentation Center URL\"\>":>
+      Module[{DocumentationSearch`Private`nb$}, 
+       DocumentationSearch`Private`nb$ = NotebookPut[
+          Notebook[{
+            Cell["QSSRHelper/ref/qdelta"]}, Visible -> False]]; 
+       SelectionMove[DocumentationSearch`Private`nb$, All, Notebook]; 
+       FrontEndTokenExecute[DocumentationSearch`Private`nb$, "Copy"]; 
+       NotebookClose[DocumentationSearch`Private`nb$]; Null], 
+      Delimiter, "\<\"Copy web URL\"\>":>
+      Module[{DocumentationSearch`Private`nb$}, 
+       DocumentationSearch`Private`nb$ = NotebookPut[
+          Notebook[{
+            Cell[
+             BoxData[
+              MakeBoxes[
+               Hyperlink[
+               "http://reference.wolfram.com/language/QSSRHelper/ref/qdelta.\
+html"], StandardForm]], "Input", TextClipboardType -> "PlainText"]}, Visible -> 
+           False]]; SelectionMove[
+        DocumentationSearch`Private`nb$, All, Notebook]; 
+       FrontEndTokenExecute[DocumentationSearch`Private`nb$, "Copy"]; 
+       NotebookClose[DocumentationSearch`Private`nb$]; 
+       Null], "\<\"Go to web URL\"\>":>FrontEndExecute[{
+        NotebookLocate[{
+          URL[
+           StringJoin[
+            If[
+             TrueQ[DocumentationBuild`Make`Private`wsmlinkQ$15704], 
+             "http://reference.wolfram.com/system-modeler/", 
+             "http://reference.wolfram.com/language/"], 
+            "QSSRHelper/ref/qdelta", ".html"]], None}]}]},
+      Appearance->None,
+      MenuAppearance->Automatic,
+      MenuStyle->"URLMenu"]],
+     LineSpacing->{1.4, 0}]], "AnchorBar"]}
+  }]], "AnchorBarGrid",
+ GridBoxOptions->{GridBoxItemSize->{"Columns" -> {
+     Scaled[0.65], {
+      Scaled[0.34]}}, "ColumnsIndexed" -> {}, "Rows" -> {{1.}}, 
+   "RowsIndexed" -> {}}},
+ CellID->1],
+
+Cell[TextData[{
+ Cell["qdelta", "ObjectName"],
+ Cell[BoxData[
+  TemplateBox[{8},
+   "Spacer1"]]],
+ Cell[BoxData[""], "ObjectNameTranslation"]
+}], "ObjectNameGrid"],
+
+Cell[BoxData[GridBox[{
+   {"", Cell[TextData[{
+     Cell[BoxData[
+      RowBox[{"qdelta", "[", "]"}]], "InlineFormula"],
+     " \[LineSeparator]qdelta is a \[Delta] symbol, which involved in \
+FourierXP, FourierPX, QEvaluate, and QNormal. "
+    }]]}
+  }]], "Usage",
+ GridBoxOptions->{
+ GridBoxBackground->{"Columns" -> {{None}}, "Rows" -> {{None}}}},
+ CellID->982511436],
+
+Cell[CellGroupData[{
+
+Cell[TextData[Cell[BoxData[
+ ButtonBox[Cell[TextData[{
+   Cell[BoxData[
+    TemplateBox[{6},
+     "Spacer1"]]],
+   "Details"
+  }], "NotesFrameText"],
+  Appearance->{Automatic, None, "Normal", Automatic},
+  BaseStyle->None,
+  ButtonFunction:>(FrontEndExecute[{
+     FrontEnd`SelectionMove[
+      FrontEnd`SelectedNotebook[], All, ButtonCell], 
+     FrontEndToken["OpenCloseGroup"], 
+     FrontEnd`SelectionMove[
+      FrontEnd`SelectedNotebook[], After, CellContents]}]& ),
+  Evaluator->None,
+  Method->"Preemptive"]]]], "NotesSection",
+ WholeCellGroupOpener->True,
+ CellGroupingRules->{"SectionGrouping", 50},
+ CellID->1],
+
+Cell["", "SectionHeaderSpacer"],
+
+Cell[TextData[{
+ "The reason that some time need this symbol is that the ",
+ Cell[BoxData[
+  TemplateBox[{
+    Cell[
+     TextData["FourierXP"]], "paclet:QSSRHelper/ref/FourierXP"},
+   "RefLink",
+   BaseStyle->{"InlineFormula"}]], "InlineFormula"],
+ " and ",
+ Cell[BoxData[
+  TemplateBox[{
+    Cell[
+     TextData["FourierPX"]], "paclet:QSSRHelper/ref/FourierPX"},
+   "RefLink",
+   BaseStyle->{"InlineFormula"}]], "InlineFormula"],
+ " treat constant term as ",
+ Cell[BoxData[
+  RowBox[{"1", "/", 
+   SuperscriptBox[
+    RowBox[{"(", 
+     SuperscriptBox["x", "2"], ")"}], "0"]}]]],
+ " and ",
+ Cell[BoxData[
+  RowBox[{"1", "/", 
+   SuperscriptBox[
+    RowBox[{"(", 
+     SuperscriptBox["p", "2"], ")"}], "0"]}]]],
+ " respectively, which get 0 because ",
+ Cell[BoxData[
+  RowBox[{
+   RowBox[{
+    RowBox[{"1", "/", "\[CapitalGamma]"}], 
+    RowBox[{"(", "0", ")"}]}], "=", "0"}]]],
+ ". However, they ",
+ Cell[BoxData[
+  RowBox[{
+   RowBox[{"~", "\[Delta]"}], 
+   RowBox[{"(", "p", ")"}]}]]],
+ "and ",
+ Cell[BoxData[
+  RowBox[{"\[Delta]", 
+   RowBox[{"(", "x", ")"}]}]]],
+ " respectively. Multiply ",
+ Cell[BoxData[
+  RowBox[{"1", "/", 
+   SuperscriptBox[
+    RowBox[{"(", 
+     SuperscriptBox["x", "2"], ")"}], "\[Delta]"]}]]],
+ " and ",
+ Cell[BoxData[
+  RowBox[{"1", "/", 
+   SuperscriptBox[
+    RowBox[{"(", 
+     SuperscriptBox["p", "2"], ")"}], "\[Delta]"]}]]],
+ " respectively and take the limit ",
+ Cell[BoxData[
+  RowBox[{"\[Delta]", "\[Rule]", "0"}]]],
+ " at the end of calculation can avoid this problem."
+}], "Notes",
+ CellID->1067943069]
+}, Closed]],
+
+Cell[" ", "FooterCell"]
+},
+Saveable->False,
+ScreenStyleEnvironment->"Working",
+WindowSize->{725, 750},
+WindowMargins->{{0, Automatic}, {Automatic, 0}},
+WindowTitle->"qdelta",
+TaggingRules->{
+ "ModificationHighlight" -> False, "ColorType" -> "SymbolColor", "LinkTrails" -> 
+  GridBox[{{
+      RowBox[{
+        ButtonBox[
+        "QSSRHelper", ButtonData -> "paclet:QSSRHelper/guide/QSSRHelper", 
+         BaseStyle -> {"Link", "DockedLinkTrail"}]}]}}, ColumnAlignments -> 
+    Left], "HasOptions" -> False, "ExampleCounter" -> 1, "NeedPlatMsgIn" -> 
+  None, "RootCaptions" -> "", 
+  "Metadata" -> {
+   "built" -> "{2022, 6, 6, 16, 3, 3.5949933}", 
+    "history" -> {"0.0", "", "", ""}, "context" -> "QSSRHelper`", 
+    "keywords" -> {}, "specialkeywords" -> {}, 
+    "tutorialcollectionlinks" -> {}, "index" -> True, "label" -> 
+    "Q S S R Helper Symbol", "language" -> "en", "paclet" -> "QSSRHelper", 
+    "status" -> "None", "summary" -> 
+    "qdelta[] qdelta is a \\[Delta] symbol, which involved in FourierXP, \
+FourierPX, QEvaluate, and QNormal. ", "synonyms" -> {}, "tabletags" -> {}, 
+    "title" -> "qdelta", "titlemodifier" -> "", "windowtitle" -> "qdelta", 
+    "type" -> "Symbol", "uri" -> "QSSRHelper/ref/qdelta"}},
+CellContext->"Global`",
+FrontEndVersion->"12.1 for Microsoft Windows (64-bit) (June 9, 2020)",
+StyleDefinitions->Notebook[{
+   Cell[
+    StyleData[
+    StyleDefinitions -> FrontEnd`FileName[{"Wolfram"}, "Reference.nb"]]], 
+   Cell[
+    StyleData["Input"], CellContext -> "Global`"], 
+   Cell[
+    StyleData["Output"], CellContext -> "Global`"]}, Visible -> False, 
+  FrontEndVersion -> "12.1 for Microsoft Windows (64-bit) (June 9, 2020)", 
+  StyleDefinitions -> "Default.nb"]
+]
+(* End of Notebook Content *)
+
+(* Internal cache information *)
+(*CellTagsOutline
+CellTagsIndex->{}
+*)
+(*CellTagsIndex
+CellTagsIndex->{}
+*)
+(*NotebookFileOutline
+Notebook[{
+Cell[578, 21, 2282, 54, 70, "AnchorBarGrid",ExpressionUUID->"3e567313-f492-42a0-bfc7-daa74e89fde4",
+ CellID->1],
+Cell[2863, 77, 163, 6, 70, "ObjectNameGrid",ExpressionUUID->"acd43e37-ef11-400e-a38a-fd49653b9a0e"],
+Cell[3029, 85, 370, 10, 70, "Usage",ExpressionUUID->"426ca7ae-6a19-47ca-a659-a931a9742219",
+ CellID->982511436],
+Cell[CellGroupData[{
+Cell[3424, 99, 621, 19, 70, "NotesSection",ExpressionUUID->"74c6c51d-4022-4c8d-9a9c-1e7d045cd88b",
+ CellGroupingRules->{"SectionGrouping", 50},
+ CellID->1],
+Cell[4048, 120, 31, 0, 70, "SectionHeaderSpacer",ExpressionUUID->"13247fae-997c-46b3-989c-e6eb8d4c53d1"],
+Cell[4082, 122, 1546, 59, 70, "Notes",ExpressionUUID->"7657c294-cad5-44bf-adf1-b872e079b327",
+ CellID->1067943069]
+}, Closed]],
+Cell[5643, 184, 23, 0, 70, "FooterCell",ExpressionUUID->"92442242-797a-47d9-b8e3-e387e206a702"]
+}
+]
+*)
+
+(* End of internal cache information *)
