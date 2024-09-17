@@ -15,17 +15,18 @@ DummyCheck::sunerr="Different sets of SU(N) indices involved in a single vertex!
 Begin["`Private`DummyCheck`"]
 
 
-DummyCheck[v1_,v2_,v3_,v4_]:=Block[{indices,indlist,vlist,lorlist,sunlist,consist=1},
+DummyCheck[v1_,v2_,v3_,v4_]:=Block[{set,indices,indlist,vlist,lorlist,sunlist,consist=1},
 vlist=DotSimplify[#]&/@({v1,v2,v3,v4}//FCI//Expand);
 vlist=If[Head[#]===Plus,List@@#,{#}]&/@vlist;(* separate each term in vertices *)
 
+SetAttributes[set,{Orderless}];(* to deal with the cases with same indices but different orders *)
 (* the lorentz indices and sun indices for each term in each vertex *)
-lorlist=Cases[#,LorentzIndex[lor_,___]:>lor,Infinity]&/@#&/@vlist;
-sunlist=Cases[#,SUNIndex[sun_,___]:>sun,Infinity]&/@#&/@vlist;
+lorlist=(set@@Cases[#,LorentzIndex[lor_,___]:>lor,Infinity])&/@#&/@vlist;
+sunlist=(set@@Cases[#,SUNIndex[sun_,___]:>sun,Infinity])&/@#&/@vlist;
 
 (* discard terms with same indices in each vertex *)
-lorlist=DeleteDuplicates[#]&/@lorlist;
-sunlist=DeleteDuplicates[#]&/@sunlist;
+lorlist=(DeleteDuplicates[#]&/@lorlist)/.set->List;
+sunlist=(DeleteDuplicates[#]&/@sunlist)/.set->List;
 
 (* each vertex should has only 1 set of indices *)
 If[Or@@(Length[#]>1&/@lorlist),
