@@ -191,7 +191,7 @@ reno2[qq_,{v1_,v2_,{a1_,b1_,c1_,d1_}},{v3_,v4_,{a2_,b2_,c2_,d2_}},ndr_,holdf_,Fa
 (* ::Code::Initialization::Plain:: *)
 reno1[qq_,{v1_,v2_,{a1_,b1_,c1_,d1_}},{v3_,v4_,{a2_,b2_,c2_,d2_}},ndr_,holdf_,True]:=Block[{tmp,listpole1},
 	tmp=FourquarkCurrent[Current[a1,v1,b1],Current[c1,v2,d1]];
-	
+
 	tmp=FourquarkPole[tmp,ShowasTable->True,VertexOnly->False,ReduceSUN->True];
 	listpole1={#[[1]], {#[[2,2]],#[[3,2]],{#[[2,1]],#[[2,3]],#[[3,1]],#[[3,3]]}}}&/@tmp;
 		(*FourquarkPole[v1,v2]*)
