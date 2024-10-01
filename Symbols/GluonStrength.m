@@ -15,8 +15,6 @@ Begin["`Private`GluonStrength`"]
 
 
 
-
-
 (*GluonStrength[a:Except[_List|_LorentzIndex],LorentzIndex[b_,dim___],c___]:=GluonStrength[LorentzIndex[a,dim],LorentzIndex[b,dim],c]
 GluonStrength[LorentzIndex[a_,dim___],b:Except[_List|_LorentzIndex],c___]:=GluonStrength[LorentzIndex[a,dim],LorentzIndex[b,dim],c]
 
@@ -95,7 +93,7 @@ If[Length[{a}]===0,
 ,
 	dlist=SubscriptBox["D",ToBoxes[#,TraditionalForm]]&/@{a};
 
-RowBox[{##,SubsuperscriptBox["G",RowBox[{ToBoxes[mu,TraditionalForm],ToBoxes[nu,TraditionalForm]}],ToBoxes[sun,TraditionalForm]]}]&@@dlist
+SuperscriptBox[RowBox[{"(",##,SubscriptBox["G",RowBox[{ToBoxes[mu,TraditionalForm],ToBoxes[nu,TraditionalForm]}]],")"}],ToBoxes[sun,TraditionalForm]]&@@dlist
 ]
 
 ]
