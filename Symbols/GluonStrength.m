@@ -68,6 +68,9 @@ GluonStrength/:SUNSimplify[GluonStrength[expr_]]:=GluonStrength[expr]
 (*GluonStrength[lors__LorentzIndex]:=GluonStrength[##]&@@({lors}/.LorentzIndex[lo_,___]:>lo)*)
 
 
+GluonStrength/:MakeBoxes[GluonStrength[],TraditionalForm]:=ToBoxes["G"]
+
+
 GluonStrength/:MakeBoxes[GluonStrength[mu:Except[_List],nu_,a___],TraditionalForm]:=Block[{dlist},
 If[Length[{a}]===0,
 
