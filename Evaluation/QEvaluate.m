@@ -81,8 +81,13 @@ If[FreeQ[tmp,Momentum[p,___]],
 	
 	(*------------------------------------------------------------*)
 	If[FreeQ[tmp,Epsilon],
-
-		tmp=QGather[tmp,p,ShowasTable->False]
+		If[FreeQ[tmp,qdelta],
+			tmp=QGather[tmp,p,ShowasTable->False]
+		,
+			tmp=tmp/.{qGamma->Gamma,QGamma->Gamma,qfactor1->Identity,qfactor2->Identity,qfact1->Identity,qfact2->Identity};
+			tmp=Series[tmp,{qdelta,0,0}]//Normal;
+			tmp=QGather[tmp,p,ShowasTable->False]
+		]
 	,
 		
 		
@@ -112,9 +117,10 @@ If[FreeQ[tmp,Momentum[p,___]],
 		,
 		
 		(* if involve qdelta, take the limit before Series[] *)
-			tmp=tmp//QNormal;
-			tmp=tmp//Expand;
-			tmp=tmp+null+null^2;
+			(*tmp=tmp//QNormal;*)
+			tmp=FCReplaceD[tmp ,D->4-2Epsilon]/.{qGamma->Gamma,QGamma->Gamma,qfactor1->Identity,qfactor2->Identity,qfact1->Identity,qfact2->Identity};
+			tmp=Series[tmp,{qdelta,0,0}]//Normal;
+			tmp=tmp+null+null^2//Expand;(* without Expansion of tmp, Series[tmp,{Epsilon,0,ord}] will be extremely slow *)
 		
 			If[OptionValue[OnebyOne]===True,
 				tmp=List@@Expand[tmp]

@@ -11,92 +11,97 @@ GluonStrength::usage =
 	
 	
 Begin["`Private`GluonStrength`"]	
-(*Options[GluonStrength] = {}*)
+Options[GluonStrength] = {
+	LeadingOnly->False
+	}
+(* allow to add a label in G^uv, so that d^uA^v-d^vA^u can be denoted as GluonStrength[n,v,LeadingOnly->True] *)
 
-
-
-(*GluonStrength[a:Except[_List|_LorentzIndex],LorentzIndex[b_,dim___],c___]:=GluonStrength[LorentzIndex[a,dim],LorentzIndex[b,dim],c]
-GluonStrength[LorentzIndex[a_,dim___],b:Except[_List|_LorentzIndex],c___]:=GluonStrength[LorentzIndex[a,dim],LorentzIndex[b,dim],c]
-
-
-GluonStrength[LorentzIndex[a_,dim1_:4],LorentzIndex[b_,dim2_:4],c___]:=Block[{dim},
-dim=Times@@({dim1,dim2}/.D-4\[Rule]{0,1}/.{4\[Rule]{1,0},D\[Rule]{1,1}});
-dim=dim/.{{1,1}\[Rule]D,{1,0}\[Rule]4,{0,1}\[Rule]D-4,{0,0}\[Rule]0};
-
-If[dim===0,
-	0
-,
-	GluonStrength[LorentzIndex[a,dim],LorentzIndex[b,dim],c]
-]
-]
-
-
-
-(*------------------------------------------------------*)
-
-GluonStrength[{a:Except[_List|_LorentzIndex],LorentzIndex[b_,dim___],sun_}c___]:=GluonStrength[{LorentzIndex[a,dim],LorentzIndex[b,dim],sun},c]
-GluonStrength[{LorentzIndex[a_,dim___],b:Except[_List|_LorentzIndex],sun_},c___]:=GluonStrength[{LorentzIndex[a,dim],LorentzIndex[b,dim],sun},c]
-
-
-GluonStrength[{LorentzIndex[a_,dim1_:4],LorentzIndex[b_,dim2_:4],sun_},c___]:=Block[{dim},
-dim=Times@@({dim1,dim2}/.D-4\[Rule]{0,1}/.{4\[Rule]{1,0},D\[Rule]{1,1}});
-dim=dim/.{{1,1}\[Rule]D,{1,0}\[Rule]4,{0,1}\[Rule]D-4,{0,0}\[Rule]0};
-
-If[dim===0,
-	0
-,
-	GluonStrength[{LorentzIndex[a,dim],LorentzIndex[b,dim],sun},c]
-]
-]*)
 
 
 GluonStrength[a:Except[_List],b_,c___]:=Signature[{a,b}]GluonStrength[##,c]&@@Sort[{a,b}]/;!OrderedQ[{a,b}]
-
 GluonStrength[{a_,b_,sun_},c___]:=Signature[{a,b}]GluonStrength[{##,sun},c]&@@Sort[{a,b}]/;!OrderedQ[{a,b}]
 
-GluonStrength[{a_,b_},c___]:=GluonStrength[a,b,c]/;Head[a]===Head[b]
+(*GluonStrength[{a_,b_},c___]:=GluonStrength[a,b,c]/;Head[a]===Head[b]*)
 
 
 GluonStrength[{a_,a_,sun_},c___]=0
 GluonStrength[{a_,a_},c___]=0
 
+(* f/:g[f,OptioinsPattern[]]:= ... doesn't work, OptionsPattern doesn't work inside UpValue *)
+GluonStrength[a:Except[_List],b_,c_List,OptionsPattern[]]:=If[OptionValue[LeadingOnly]===True,GluonStrength[a,b,c,True],GluonStrength[a,b,c,False]]
+GluonStrength[a:Except[_List],b_,OptionsPattern[]]:=If[OptionValue[LeadingOnly]===True,GluonStrength[a,b,{},True],GluonStrength[a,b,{},False]]
+GluonStrength[{a_,b_,sun_},c_List,OptionsPattern[]]:=If[OptionValue[LeadingOnly]===True,GluonStrength[{a,b,sun},c,True],GluonStrength[{a,b,sun},c,False]]
+GluonStrength[{a_,b_,sun_},OptionsPattern[]]:=If[OptionValue[LeadingOnly]===True,GluonStrength[{a,b,sun},{},True],GluonStrength[{a,b,sun},{},False]]
+
+
 (* SUNSimplify don't know what GluonStrength is. *)
-GluonStrength/:SUNSimplify[GluonStrength[expr_]]:=GluonStrength[expr]
+GluonStrength/:SUNSimplify[GluonStrength[expr__]]:=GluonStrength[expr]
 
 
 (*-------------------------------------------------------------------------------------------*)
 (*GluonStrength[lors__LorentzIndex]:=GluonStrength[##]&@@({lors}/.LorentzIndex[lo_,___]:>lo)*)
 
 
-GluonStrength/:MakeBoxes[GluonStrength[],TraditionalForm]:=ToBoxes["G"]
+GluonStrength/:MakeBoxes[GluonStrength[OptionsPattern[]],TraditionalForm]:=ToBoxes["G"]
 
 
-GluonStrength/:MakeBoxes[GluonStrength[mu:Except[_List],nu_,a___],TraditionalForm]:=Block[{dlist},
-If[Length[{a}]===0,
+(*GluonStrength/:MakeBoxes[GluonStrength[mu:Except[_List],nu_,de_List,Leading_],TraditionalForm]:=Block[{dlist,covd=True},
 
-	SubscriptBox["G",RowBox[{ToBoxes[mu,TraditionalForm],ToBoxes[nu,TraditionalForm]}]]
+If[Length[de]===0,
+
+	SubscriptBox[UnderscriptBox["G","_"],RowBox[{ToBoxes[mu,TraditionalForm],ToBoxes[nu,TraditionalForm]}]]
 ,
-	dlist=SubscriptBox["D",ToBoxes[#,TraditionalForm]]&/@{a};
+	If[And@@(MatchQ[#,_List]&/@de),covd=False];(* if no covariant derivative involved and only partial derivative is involved *)
+	dlist=If[MatchQ[#,_List],SubscriptBox["\[PartialD]",ToBoxes[#[[1]],TraditionalForm]],SubscriptBox["D",ToBoxes[#,TraditionalForm]]]&/@de;
 
-RowBox[{##,SubscriptBox["G",RowBox[{ToBoxes[mu,TraditionalForm],ToBoxes[nu,TraditionalForm]}]]}]&@@dlist
+	RowBox[{##,SubscriptBox[UnderscriptBox["G","_"],RowBox[{ToBoxes[mu,TraditionalForm],ToBoxes[nu,TraditionalForm]}]]}]&@@dlist
+]
+
+]*)
+
+GluonStrength/:MakeBoxes[GluonStrength[mu:Except[_List],nu_,de_List,leading_],TraditionalForm]:=Block[{guv,dlist},
+If[leading===True,
+	guv=UnderscriptBox["G","_"]
+,
+	guv="G"
+];
+
+If[Length[de]===0,
+
+	SubscriptBox[guv,RowBox[{ToBoxes[mu,TraditionalForm],ToBoxes[nu,TraditionalForm]}]]
+,
+	dlist=If[MatchQ[#,_List],SubscriptBox["\[PartialD]",ToBoxes[#[[1]],TraditionalForm]],SubscriptBox["D",ToBoxes[#,TraditionalForm]]]&/@de;
+
+	RowBox[{##,SubscriptBox[guv,RowBox[{ToBoxes[mu,TraditionalForm],ToBoxes[nu,TraditionalForm]}]]}]&@@dlist
 ]
 
 ]
-
 
 
 
 (*GluonStrength[{mu_LorentzIndex,nu_LorentzIndex,sun_},lors___LorentzIndex]:=GluonStrength[{mu/.LorentzIndex[lo_,___]:>lo,nu/.LorentzIndex[lo_,___]:>lo,sun},##]&@@({lors}/.LorentzIndex[lo_,___]:>lo)
 
 *)
-GluonStrength/:MakeBoxes[GluonStrength[{mu_,nu_,sun_},a___],TraditionalForm]:=Block[{dlist},
-If[Length[{a}]===0,
+GluonStrength/:MakeBoxes[GluonStrength[{mu_,nu_,sun_},de_List,leading_],TraditionalForm]:=Block[{guv,dlist,covd=True},
 
-	SubsuperscriptBox["G",RowBox[{ToBoxes[mu,TraditionalForm],ToBoxes[nu,TraditionalForm]}],ToBoxes[sun,TraditionalForm]]
+If[leading===True,
+	guv=UnderscriptBox["G","_"]
 ,
-	dlist=SubscriptBox["D",ToBoxes[#,TraditionalForm]]&/@{a};
+	guv="G"
+];
 
-SuperscriptBox[RowBox[{"(",##,SubscriptBox["G",RowBox[{ToBoxes[mu,TraditionalForm],ToBoxes[nu,TraditionalForm]}]],")"}],ToBoxes[sun,TraditionalForm]]&@@dlist
+If[Length[de]===0,
+
+	SubsuperscriptBox[guv,RowBox[{ToBoxes[mu,TraditionalForm],ToBoxes[nu,TraditionalForm]}],ToBoxes[sun,TraditionalForm]]
+,
+	If[And@@(MatchQ[#,_List]&/@de),covd=False];(* if no covariant derivative involved and only partial derivative is involved *)
+	dlist=If[MatchQ[#,_List],SubscriptBox["\[PartialD]",ToBoxes[#[[1]],TraditionalForm]],SubscriptBox["D",ToBoxes[#,TraditionalForm]]]&/@de;
+	
+	If[covd,
+		SuperscriptBox[RowBox[{"(",##,SubscriptBox[guv,RowBox[{ToBoxes[mu,TraditionalForm],ToBoxes[nu,TraditionalForm]}]],")"}],ToBoxes[sun,TraditionalForm]]&@@dlist
+	,
+		RowBox[Join[dlist,{SubsuperscriptBox[guv,RowBox[{ToBoxes[mu,TraditionalForm],ToBoxes[nu,TraditionalForm]}],ToBoxes[sun,TraditionalForm]]}]]
+	]
 ]
 
 ]

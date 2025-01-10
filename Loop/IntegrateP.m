@@ -19,7 +19,8 @@ Options[IntegrateP] = {
 	lessdummy->True,
 	Simplify->True,
 	ShowSteps->False,
-	ScaleMu->False}
+	ScaleMu->False
+	}
 
 
 
@@ -157,9 +158,6 @@ If[smu=="true",
 	tmp=IntegrateX[expr,p,Contract->OptionValue[Contract],dp->True,lessdummy->OptionValue[lessdummy],Simplify->OptionValue[Simplify]]
 ]
 ]
-
-
-
 
 
 
