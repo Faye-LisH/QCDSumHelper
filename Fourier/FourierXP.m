@@ -204,7 +204,7 @@ If[(tmp=!=0)&&FreeQ[tmp,Pair[Momentum[x,___],Momentum[x,___]]|FeynAmpDenominator
 		result=result/.{null2->1,p:>pp};
 
 
-		If[opt==Integer, result=result/.qGamma[nn_Integer]/;nn<4 :>Gamma[nn]];
+		If[opt==Integer, result=result/.qGamma[nn_Integer]/;0<nn<4 :>Gamma[nn]];
 
 		If[opt==All,result=result/.qGamma:>qGamma2];
 
