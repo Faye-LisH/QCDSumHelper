@@ -12,13 +12,16 @@ GluonStrength::usage =
 	
 Begin["`Private`GluonStrength`"]	
 Options[GluonStrength] = {
-	LeadingOnly->False
+	Order->"All"
 	}
-(* allow to add a label in G^uv, so that d^uA^v-d^vA^u can be denoted as GluonStrength[n,v,LeadingOnly->True] *)
+(* allow to add a label in G^uv, so that d^uA^v-d^vA^u can be denoted as GluonStrength[n,v,Order->0], and f^nabc A^buA^cv can be denoted as GluonStrength[n,v,Order->1] *)
 
 
 
 GluonStrength[a:Except[_List],b_,c___]:=Signature[{a,b}]GluonStrength[##,c]&@@Sort[{a,b}]/;!OrderedQ[{a,b}]
+(* This definition cause the pattern match GluonStrength[lis_,__] failed, unless without pattern name, like GluonStrength[_,__]; to match GluonStrength[lis_List,__], write it as GluonStrength[{a_,b_,c_},__] *)
+
+
 GluonStrength[{a_,b_,sun_},c___]:=Signature[{a,b}]GluonStrength[{##,sun},c]&@@Sort[{a,b}]/;!OrderedQ[{a,b}]
 
 (*GluonStrength[{a_,b_},c___]:=GluonStrength[a,b,c]/;Head[a]===Head[b]*)
@@ -28,10 +31,10 @@ GluonStrength[{a_,a_,sun_},c___]=0
 GluonStrength[{a_,a_},c___]=0
 
 (* f/:g[f,OptioinsPattern[]]:= ... doesn't work, OptionsPattern doesn't work inside UpValue *)
-GluonStrength[a:Except[_List],b_,c_List,OptionsPattern[]]:=If[OptionValue[LeadingOnly]===True,GluonStrength[a,b,c,True],GluonStrength[a,b,c,False]]
-GluonStrength[a:Except[_List],b_,OptionsPattern[]]:=If[OptionValue[LeadingOnly]===True,GluonStrength[a,b,{},True],GluonStrength[a,b,{},False]]
-GluonStrength[{a_,b_,sun_},c_List,OptionsPattern[]]:=If[OptionValue[LeadingOnly]===True,GluonStrength[{a,b,sun},c,True],GluonStrength[{a,b,sun},c,False]]
-GluonStrength[{a_,b_,sun_},OptionsPattern[]]:=If[OptionValue[LeadingOnly]===True,GluonStrength[{a,b,sun},{},True],GluonStrength[{a,b,sun},{},False]]
+GluonStrength[a:Except[_List],b_,c_List,OptionsPattern[]]:=If[OptionValue[Order]==="All",GluonStrength[a,b,c,False],GluonStrength[a,b,c,OptionValue[Order]]]
+GluonStrength[a:Except[_List],b_,OptionsPattern[]]:=If[OptionValue[Order]==="All",GluonStrength[a,b,{},False],GluonStrength[a,b,{},OptionValue[Order]]]
+GluonStrength[{a_,b_,sun_},c_List,OptionsPattern[]]:=If[OptionValue[Order]==="All",GluonStrength[{a,b,sun},c,False],GluonStrength[{a,b,sun},c,OptionValue[Order]]]
+GluonStrength[{a_,b_,sun_},OptionsPattern[]]:=If[OptionValue[Order]==="All",GluonStrength[{a,b,sun},{},False],GluonStrength[{a,b,sun},{},OptionValue[Order]]]
 
 
 (* SUNSimplify don't know what GluonStrength is. *)
@@ -59,10 +62,14 @@ If[Length[de]===0,
 
 ]*)
 
-GluonStrength/:MakeBoxes[GluonStrength[mu:Except[_List],nu_,de_List,leading_],TraditionalForm]:=Block[{guv,dlist},
-If[leading===True,
+GluonStrength/:MakeBoxes[GluonStrength[mu:Except[_List],nu_,de_List,order_],TraditionalForm]:=Block[{guv,dlist},
+Which[order===0,
 	guv=UnderscriptBox["G","_"]
 ,
+	order===1,
+	guv=UnderscriptBox[UnderscriptBox["G","_"],"_"]
+,
+	True,
 	guv="G"
 ];
 
@@ -82,11 +89,15 @@ If[Length[de]===0,
 (*GluonStrength[{mu_LorentzIndex,nu_LorentzIndex,sun_},lors___LorentzIndex]:=GluonStrength[{mu/.LorentzIndex[lo_,___]:>lo,nu/.LorentzIndex[lo_,___]:>lo,sun},##]&@@({lors}/.LorentzIndex[lo_,___]:>lo)
 
 *)
-GluonStrength/:MakeBoxes[GluonStrength[{mu_,nu_,sun_},de_List,leading_],TraditionalForm]:=Block[{guv,dlist,covd=True},
+GluonStrength/:MakeBoxes[GluonStrength[{mu_,nu_,sun_},de_List,order_],TraditionalForm]:=Block[{guv,dlist,covd=True},
 
-If[leading===True,
+Which[order===0,
 	guv=UnderscriptBox["G","_"]
 ,
+	order===1,
+	guv=UnderscriptBox[UnderscriptBox["G","_"],"_"]
+, 
+	True,
 	guv="G"
 ];
 
