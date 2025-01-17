@@ -2,12 +2,6 @@
 
 This is repository is the copy of ```https://github.com/QSSRHelper/QSSRHelper```, which is unaccessible due to the account is flagged for unknown resaon
 
-## to do:
-
-- enhance the QSimplify so that it can recongize the color indicex in the Tetraquark current
-- SU(3) flavor decomposition
-- generate diagrams
-
 ## Install&Usage
 
 This package require the lateset version of FeynCalc.
@@ -22,7 +16,8 @@ e.g. download the repository as a zip file and unpackage it into ``` ...\Mathema
     └--Applications
     |   |
     |   └-- FeynCalc
-    |   |
+    |   |   |...
+    |   |   
     |   └-- QSSRHelper
     |...    |
             └-- Auxiliary
@@ -85,4 +80,10 @@ QEvaluate[I   dia   ScaleMu^(2  (4 - D)), p]
 ```
 
 The Documentation is out of date and may useless at this time, the development of this package is far from complete due to the lack of time.
+
+## to do:
+
+- enhance the QSimplify so that it can recongize the color indicex in the Tetraquark current
+- SU(3) flavor decomposition
+- generate diagrams
 
