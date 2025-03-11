@@ -25,7 +25,7 @@ Options[QEvaluate] = {
 	OnebyOne->False,
 	Subtract->"None",
 	Parallelized->"Auto",
-	HoldFlavor->False(*,
+	HoldFlavor->True(*,
 	ShowasTable\[Rule]False*)
 	}
 
