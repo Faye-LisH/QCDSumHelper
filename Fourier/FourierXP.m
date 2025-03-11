@@ -54,7 +54,7 @@ inverse=OptionValue[Inverse],sign=-1,null2,null,null5,nulllo,nullpo,nullindx,Fli
 
 tmp=expr//FCI;
 
-If[(tmp=!=0)&&FreeQ[tmp,Pair[Momentum[x,___],Momentum[x,___]]|FeynAmpDenominator[PropagatorDenominator[Momentum[x,___],___]]],
+If[(tmp=!=0)&&FreeQ[tmp,Pair[Momentum[x,___],Momentum[x,___]]|FeynAmpDenominator[PropagatorDenominator[Momentum[x,___],___],___]],
 	Message[FourierXP::argerr,x];
 	If[DebugPrint,Print[tmp]];
 	tmp
