@@ -22,7 +22,7 @@ Begin["`Private`Borel`"]
 
 
 Options[Borel] ={
-	Renormalization->"Auto"}
+	Renormalization->False}
 (* ,deriv=OptionValue[Derivate],sub=OptionValue[Subtraction]
 Derivate->deriv,Subtraction->sub, *)
 
@@ -184,7 +184,17 @@ If[ToLowerCase[ToString[re]]==="auto",
 
 	tmp=tmp/.{Log[1/v2]->Log[t],Log[v2]->-Log[t]}/.v2->1/t
 ,
-	If[MatchQ[re,Rule[_,_]],tmp=tmp/.v2->re[[2]]]
+	If[!re===True,
+		tmp=tmp/.v2->ScaleMu^2
+	,
+		If[MatchQ[re,Rule[_,_]],
+			tmp=tmp/.v2->re[[2]]
+		,
+			If[MatchQ[re,Symbol],
+				tmp=tmp/.v2->re
+			]
+		]
+	];
 ];
 
 
@@ -199,8 +209,6 @@ If[!FreeQ[tmp,Condensate],
 
 
 If[Length[tmp]==1&&tmp[[1,1]]==1,tmp[[1,2]],tmp]
-
-
 
 ]
 
