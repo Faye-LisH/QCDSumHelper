@@ -15,7 +15,7 @@ ShowasTable::usage="Whether show the result as a table for some functions."
 Parallelized::usage="Whether parallelize the evaluation."
 
 
-Renormalization::usage="Whether renormalize the current automatically."
+SetScaleMu::usage="How to treat the \!\(\*SuperscriptBox[\(\[Mu]\), \(2\)]\) in Borel Transformation, set it to \"Auto\" then replace \!\(\*SuperscriptBox[\(\[Mu]\), \(2\)]\)\[Rule]\!\(\*FractionBox[\(1\), \(\[Tau]\)]\)."
 
 
 EpsOrder::usage="To which order of \[Epsilon], EpsOrder->0 by default."
@@ -39,7 +39,7 @@ Pole::usage="When evaluating leading perturbative contribution, this Option sets
 SimplifyGamma::usage="Whether simplify the Gamma function appear in qfact1."
 
 
-
+Transverse::usage="Wheter seperating the transverse and longitudinal part."
 
 
 (*Begin["`Private`"];*)

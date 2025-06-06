@@ -22,7 +22,7 @@ Begin["`Private`Borel`"]
 
 
 Options[Borel] ={
-	Renormalization->False}
+	SetScaleMu->"AsIs"}
 (* ,deriv=OptionValue[Derivate],sub=OptionValue[Subtraction]
 Derivate->deriv,Subtraction->sub, *)
 
@@ -36,38 +36,38 @@ Borel[expr_,{p_Symbol,{t_,nn_}},OptionsPattern[]]/;FreeQ[expr,p]:=Message[Borel:
 
 (* Integrate from 0 to s0 *)
 Borel[expr:Except[_?ListQ],{p_Symbol,t_,s0_},OptionsPattern[]]/;MatchQ[t,_Symbol|_Positive]:=Block[
-{tmp,re=OptionValue[Renormalization]},
+{tmp,re=OptionValue[SetScaleMu]},
 
 tmp=expr//FCI;
 
 If[!FreeQ[tmp,Momentum[aa_Plus]/;!FreeQ[aa,p]],Message[Borel::evawarn];Abort[]];
 
-tmp=Borel[QGather[tmp,p,ShowasTable->True],{p,t,s0},Renormalization->re]
+tmp=Borel[QGather[tmp,p,ShowasTable->True],{p,t,s0},SetScaleMu->re]
 ]
 
 
 (*-----------*)
 Borel[expr:Except[_?ListQ],{p_Symbol,{t_,n_Integer},s0_},OptionsPattern[]]/;MatchQ[t,_Symbol|_Positive]&&Positive[n]:=
-Borel[expr Pair[Momentum[p,D],Momentum[p,D]]^n,{p,t,s0},Renormalization->OptionValue[Renormalization]]
+Borel[expr Pair[Momentum[p,D],Momentum[p,D]]^n,{p,t,s0},SetScaleMu->OptionValue[SetScaleMu]]
 
 
 
 
 (* s0 -> Infinity *)
-Borel[expr:Except[_?ListQ],{p_Symbol,t_},OptionsPattern[]]/;MatchQ[t,_Symbol|_Positive]:=Block[{tmp,re=OptionValue[Renormalization]},
+Borel[expr:Except[_?ListQ],{p_Symbol,t_},OptionsPattern[]]/;MatchQ[t,_Symbol|_Positive]:=Block[{tmp,re=OptionValue[SetScaleMu]},
 
 tmp=expr//FCI;
 
 If[!FreeQ[tmp,Momentum[aa_Plus]/;!FreeQ[aa,p]],Message[Borel::evawarn];Abort[]];
 
-tmp=Borel[QGather[tmp,p,ShowasTable->True],{p,t},Renormalization->re]
+tmp=Borel[QGather[tmp,p,ShowasTable->True],{p,t},SetScaleMu->re]
 
 
 ]
 
 (*-----------*)
 Borel[expr:Except[_?ListQ],{p_Symbol,{t_,n_Integer}},OptionsPattern[]]/;MatchQ[t,_Symbol|_Positive]&&Positive[n]:=
-Borel[expr Pair[Momentum[p,D],Momentum[p,D]]^n ,{p,t},Renormalization->OptionValue[Renormalization]]
+Borel[expr Pair[Momentum[p,D],Momentum[p,D]]^n ,{p,t},SetScaleMu->OptionValue[SetScaleMu]]
 
 
 
@@ -75,11 +75,11 @@ Borel[expr Pair[Momentum[p,D],Momentum[p,D]]^n ,{p,t},Renormalization->OptionVal
 (* s0 -> Infinity *)
 (* for input match the output of QGather *)
 Borel[expr_List,{p_Symbol,{t_,n_Integer}},OptionsPattern[]]/;(And@@(MatchQ[#,{_,_List}]&/@expr))&&MatchQ[t,_Symbol|_Positive]&&Positive[n]:=
-Borel[({1,Pair[Momentum[p,D],Momentum[p,D]]^n}#)&/@expr ,{p,t},Renormalization->OptionValue[Renormalization]]
+Borel[({1,Pair[Momentum[p,D],Momentum[p,D]]^n}#)&/@expr ,{p,t},SetScaleMu->OptionValue[SetScaleMu]]
 
 (*-----------*)
 Borel[expr_List,{p_Symbol,t_},OptionsPattern[]]/;(And@@(MatchQ[#,{_,_List}]&/@expr))&&MatchQ[t,_Symbol|_Positive]:=
-Borel[expr,{p,t,Infinity},Renormalization->OptionValue[Renormalization]]
+Borel[expr,{p,t,Infinity},SetScaleMu->OptionValue[SetScaleMu]]
 
 
 
@@ -88,11 +88,11 @@ Borel[expr,{p,t,Infinity},Renormalization->OptionValue[Renormalization]]
 (* for input match the output of QGather *)
 
 Borel[expr_List,{p_Symbol,{t_,n_Integer},s0_},OptionsPattern[]]/;(And@@(MatchQ[#,{_,_List}]&/@expr))&&MatchQ[t,_Symbol|_Positive]&&Positive[n]:=
-Borel[({1,Pair[Momentum[p,D],Momentum[p,D]]^n}#)&/@expr,{p,t,s0},Renormalization->OptionValue[Renormalization]]
+Borel[({1,Pair[Momentum[p,D],Momentum[p,D]]^n}#)&/@expr,{p,t,s0},SetScaleMu->OptionValue[SetScaleMu]]
 
 (*-----------*)
 Borel[expr_List,{p_Symbol,t_,s0_},OptionsPattern[]]/;(And@@(MatchQ[#,{_,_List}]&/@expr))&&MatchQ[t,_Symbol|_Positive]:=Block[
-{tmp,tmp1,re=OptionValue[Renormalization],s,null,null1,null0,r,v2,tmp2},
+{tmp,tmp1,re=OptionValue[SetScaleMu],s,null,null1,null0,r,v2,tmp2},
 
 tmp=expr//FCI;
 
@@ -184,7 +184,7 @@ If[ToLowerCase[ToString[re]]==="auto",
 
 	tmp=tmp/.{Log[1/v2]->Log[t],Log[v2]->-Log[t]}/.v2->1/t
 ,
-	If[!re===True,
+	If[!re==="AsIs",
 		tmp=tmp/.v2->ScaleMu^2
 	,
 		If[MatchQ[re,Rule[_,_]],
