@@ -44,7 +44,7 @@ If[Head[tmp]===Plus,
 	tmp=List@@tmp;
 
 	(*--- seprate commutative and non-commutative parts ---*)
-	tmp={Replace[#,aa_/;!FreeQ[aa,Alternatives@@rules]->1,{1}],Replace[#,aa_/;FreeQ[aa,Alternatives@@rules]->1,{1}]}&/@tmp;
+	tmp={Replace[#,aa_/;!FreeQ[aa,Alternatives@@rules]->1,{0,1}],Replace[#,aa_/;FreeQ[aa,Alternatives@@rules]->1,{0,1}]}&/@tmp;
 	tmp=Gather[tmp,Last[#1]==Last[#2]&];(* treat different non-commutative parts as different terms *)
 
 
