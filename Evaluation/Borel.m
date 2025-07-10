@@ -184,7 +184,7 @@ If[ToLowerCase[ToString[re]]==="auto",
 
 	tmp=tmp/.{Log[1/v2]->Log[t],Log[v2]->-Log[t]}/.v2->1/t
 ,
-	If[!re==="AsIs",
+	If[re==="AsIs",
 		tmp=tmp/.v2->ScaleMu^2
 	,
 		If[MatchQ[re,Rule[_,_]],
