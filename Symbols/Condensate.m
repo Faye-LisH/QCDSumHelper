@@ -11,7 +11,9 @@ Condensate::err="Unrecongized condensate structure, the structure should be spec
 
 
 Begin["`Private`Condensate`"]	
-(*Options[Condensate] = {}*)
+(*Options[Condensate] = {
+	Factorization->False
+}*)
 
 
 
@@ -22,7 +24,7 @@ Begin["`Private`Condensate`"]
 
 Condensate[xx1_,xx2__]:=Condensate[xx1]Condensate[xx2]
 
-Condensate/: MakeBoxes[Condensate[x_],TraditionalForm]:=Block[{xx,list,list1,list2,tmp},
+Condensate/: MakeBoxes[Condensate[x_],TraditionalForm]:=Block[{xx,list,matched,list1,list2,tmp},
 
 list={
 	{"qq",RowBox[{"\[LeftAngleBracket]","\[ThinSpace]",OverscriptBox["q", "_"],"q","\[ThinSpace]","\[RightAngleBracket]"}]},
@@ -38,6 +40,22 @@ list={
 	{"ggg",RowBox[{"\[LeftAngleBracket]","",SuperscriptBox["G", "3"],"","\[RightAngleBracket]"}]},
 	{"d8",RowBox[{"\[LeftAngleBracket]","\[ThinSpace]",OverscriptBox["q", "_"],"q","","\[RightAngleBracket]","\[LeftAngleBracket]","\[ThinSpace]",OverscriptBox["q", "_"],"G","q","\[ThinSpace]","\[RightAngleBracket]"}]},
 	{"qq3",RowBox[{"\[LeftAngleBracket]","\[ThinSpace]",OverscriptBox["q", "_"],"q",SuperscriptBox["\[RightAngleBracket]", "3"]}]}
+	,
+(* bases of quark-condensates Subsuperscript[Q, i, n] in A.GROZIN, "METHODS OF CALCULATION OF HIGHER POWER CORRECTIONS IN QCD",International Journal of Modern Physics A 10 (1995) 3497. https://doi.org/10.1142/S0217751X95001674 *)
+	{{"Q3",_},SuperscriptBox["Q","3"]},
+	{{"Q5",_},SuperscriptBox["Q","5"]},
+	{{"Q6",_},SuperscriptBox["Q","6"]},
+	{{"Q71",_},SubsuperscriptBox["Q","1","7"]},
+	{{"Q72",_},SubsuperscriptBox["Q","2","7"]},
+	{{"Q73",_},SubsuperscriptBox["Q","3","7"]},
+	{{"Q74",_},SubsuperscriptBox["Q","4","7"]},
+	{{"A",_}, ToBoxes["A"]},
+	{{"Q81",_},SubsuperscriptBox["Q","1","8"]},
+	{{"Q82",_},SubsuperscriptBox["Q","2","8"]},
+	{{"Q83",_},SubsuperscriptBox["Q","3","8"]},
+	{{"Q84",_},SubsuperscriptBox["Q","4","8"]},
+	{{"Q85",_},SubsuperscriptBox["Q","5","8"]},
+	{{"Q86",_},SubsuperscriptBox["Q","6","8"]}
 	};
 	
 	
@@ -46,8 +64,9 @@ list2=Transpose[list][[2]];
 
 
 (* -------------------- *)
-If[!FreeQ[list1,ToString[x]],
-	xx=Position[list1,ToString[x]][[1,1]];
+matched=Position[list1,aa_/;MatchQ[x,aa],1];
+If[Length[matched]>0,
+	xx=matched[[1,1]];
 	list2[[xx]]
 	,
 
