@@ -42,6 +42,15 @@ SimplifyGamma::usage="Whether simplify the Gamma function appear in qfact1."
 Transverse::usage="Wheter seperating the transverse and longitudinal part."
 
 
+Massless::usage="Option for D8Condensate, D7Condensate, and D6Condensate that wether keep the quark be massive."
+
+
+Explicit::usage="Option for AGammaD, AGamma, D8Condensate, D7Condensate, and D6Condensate that wether show the anti-symmetric gamma matrices explicitly."
+
+
+Factorization::usage="Option for D8Condensate, D7Condensate, and D6Condensate that wether factorize the condensate."
+
+
 (*Begin["`Private`"];*)
 
 
