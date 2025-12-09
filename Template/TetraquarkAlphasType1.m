@@ -222,6 +222,10 @@ If[pall===True,
 ]*)
 
 
+reno1[qq_,cur1_,cur2_,f11_,f12_,f13_,f14_,f21_,f22_,f23_,f24_,ndr_,holdf_,False]=0
+reno2[qq_,cur1_,cur2_,f11_,f12_,f13_,f14_,f21_,f22_,f23_,f24_,ndr_,holdf_,False]=0
+
+
 (* ::Code::Initialization::Plain:: *)
 reno1[qq_,cur1_,cur2_,f11_,f12_,f13_,f14_,f21_,f22_,f23_,f24_,ndr_,holdf_,True]:=Block[{tmp,listpole1,listpole2},
 
