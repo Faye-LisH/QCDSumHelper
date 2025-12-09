@@ -59,10 +59,12 @@ xprop2[x_,lorb_,lorz_,lor1_,lor2_]=(Pair[LorentzIndex[lor1, D], LorentzIndex[lor
   Pair[Momentum[x, D], Momentum[x, D]]^(-1 - D)*qfact1[((-1)^(1 - D)*gStrong*qGamma[2 - D/2]*qGamma[D/2]^2*qGamma[1 + D])/(4*Pi^D*qGamma[3 - D/2]*qGamma[D])];
 
 
+(* ::Code::Initialization::Plain:: *)
 FourquarkHybridlike1[qq_,0,{v3_,v4_,{a2_,b2_,c2_,d2_}},OptionsPattern[]]=0
 FourquarkHybridlike1[qq_,{a1_,sut_,gs_,0,b1_},{v3_,v4_,{a2_,b2_,c2_,d2_}},OptionsPattern[]]=0
 
 
+(* ::Code::Initialization::Plain:: *)
 FourquarkHybridlike1[qq_,{a1_,sut_,gs_,gv_,b1_},{v3_,v4_,{a2_,b2_,c2_,d2_}},OptionsPattern[]]:=Block[{null,tmpc1,tmpc2,tmp1,tmp2,tmp,trs,dia,x,q,sun=sut[[1,1]],lorb,sign,v1=sut gv,
 hv3,hv4,order=OptionValue[EpsOrder],holdf=OptionValue[HoldFlavor],strategy=OptionValue[Strategy],diagrams,atr,plus,waitAll,parallelSubmit,pole=OptionValue[Pole]},
 
@@ -143,6 +145,7 @@ If[OptionValue[Parallelized]===True,
 
 
 
+(* ::Code::Initialization::Plain:: *)
 xtype1[qq_,{a1_,v1_,b1_},{hv3_,hv4_,{a2_,b2_,c2_,d2_}},sun_,lorb_,holdf_,atr_,order_,pole_]:=Block[{x,q,dia1,str,tr,dot,contract},
 
 
@@ -158,7 +161,7 @@ dia1=QEvaluate[I ScaleMu^(3(4-D))pole dia1,q,HoldFlavor->holdf,EpsOrder->order,P
 ]
 
 
-(* ::Input::Initialization:: *)
+(* ::Input::Initialization::Plain:: *)
 typetx1[qq_,{a1_,v1_,b1_},{hv3_,hv4_,{a2_,b2_,c2_,d2_}},sun_,lorb_,holdf_,atr_,order_,pole_]:=Block[{x,q,dia1,lor1,lor2,lorz},
 
 
@@ -171,7 +174,7 @@ dia1=QEvaluate[I ScaleMu^(3(4-D)) dia1 pole,q,HoldFlavor->holdf,Parallelized->Fa
 ]
 
 
-(* ::Input::Initialization:: *)
+(* ::Input::Initialization::Plain:: *)
 typetp1[qq_,{a1_,v1_,b1_},{hv3_,hv4_,{a2_,b2_,c2_,d2_}},sun_,lorb_,holdf_,atr_,order_,pole_]:=Block[{k1,l,k,q,dia1,lor1,lor2,lorz},
 
 

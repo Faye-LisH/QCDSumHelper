@@ -62,10 +62,12 @@ xprop2[x_,lorb_,lorz_,lor1_,lor2_]=(Pair[LorentzIndex[lor1, D], LorentzIndex[lor
   Pair[Momentum[x, D], Momentum[x, D]]^(-1 - D)*qfact1[((-1)^(1 - D)*gStrong*qGamma[2 - D/2]*qGamma[D/2]^2*qGamma[1 + D])/(4*Pi^D*qGamma[3 - D/2]*qGamma[D])];
 
 
+(* ::Code::Initialization::Plain:: *)
 FourquarkHybridlike2[qq_,{v1_,v2_,{a1_,b1_,c1_,d1_}},0,OptionsPattern[]]=0
 FourquarkHybridlike2[qq_,{v1_,v2_,{a1_,b1_,c1_,d1_}},{a2_,sut_,gs_,0,b2_},OptionsPattern[]]=0
 
 
+(* ::Code::Initialization::Plain:: *)
 FourquarkHybridlike2[qq_,{v1_,v2_,{a1_,b1_,c1_,d1_}},{a2_,sut_,gs_,gv_,b2_},OptionsPattern[]]:=Block[{null,tmpc1,tmpc2,tmp1,tmp2,tmp,trs,dia,x,q,sun=sut[[1,1]],lorb,sign,v3=sut gv,
 hv3,hv4,order=OptionValue[EpsOrder],holdf=OptionValue[HoldFlavor],strategy=OptionValue[Strategy],diagrams,atr,pole=OptionValue[Pole]},
 
@@ -140,6 +142,7 @@ If[OptionValue[Parallelized]===True,
 
 
 
+(* ::Code::Initialization::Plain:: *)
 xtype1[qq_,{v1_,v2_,{a1_,b1_,c1_,d1_}},{a2_,hv3_,b2_},sun_,lorb_,holdf_,atr_,order_,pole_]:=Block[{x,q,dia1,str,tr,dot,contract},
 
 
@@ -155,7 +158,7 @@ dia1=QEvaluate[I ScaleMu^(3(4-D))pole dia1,q,HoldFlavor->holdf,Parallelized->Fal
 ]
 
 
-(* ::Input::Initialization:: *)
+(* ::Input::Initialization::Plain:: *)
 typetx1[qq_,{v1_,v2_,{a1_,b1_,c1_,d1_}},{a2_,hv3_,b2_},sun_,lorb_,holdf_,atr_,order_,pole_]:=Block[{x,q,dia1,lorz},
 
 
@@ -168,11 +171,11 @@ dia1=QEvaluate[I ScaleMu^(3(4-D)) dia1 pole,q,HoldFlavor->holdf,EpsOrder->order,
 ]
 
 
-(* ::Input::Initialization:: *)
+(* ::Input::Initialization::Plain:: *)
 typetp1[qq_,{v1_,v2_,{a1_,b1_,c1_,d1_}},{a2_,hv3_,b2_},sun_,lorb_,holdf_,atr_,order_,pole_]:=Block[{k1,l,k,dia1,lorz},
 
 
-dia1=-(gStrong*SUNTrace[atr[(FVD[l, lorb]*FVD[l, lorz] - MTD[lorb, lorz]*SPD[l]) . v2 . prop[k1 + l] . GAD[lorz] . SUNT[sun] . prop[k1] . v1 . prop[-k + q] . hv3 . prop[-k + l]]]*FAD[l]*FlavorDelta[a2, c1]*FlavorDelta[b1, b2]*FlavorDelta[d1, a1]) + dia[SUNTrace[atr[(FVD[l, lorb]*FVD[l, lorz] - MTD[lorb, lorz]*SPD[l]) . v1 . prop[k1 + l] . GAD[lorz] . SUNT[sun] . prop[k1]]], SUNTrace[atr[hv3 . prop[k - q] . v2 . prop[k - l]]]]*FlavorDelta[a2, c1]*FlavorDelta[b1, a1]*FlavorDelta[d1, b2] - gStrong*SUNTrace[atr[(FVD[l, lorb]*FVD[l, lorz] - MTD[lorb, lorz]*SPD[l]) . hv3 . prop[k - q] . v1 . prop[k1 + l] . GAD[lorz] . SUNT[sun] . prop[k1] . v2 . prop[k - l]]]*FAD[l]*FlavorDelta[a2, a1]*FlavorDelta[b1, c1]*FlavorDelta[d1, b2] + dia[SUNTrace[atr[hv3 . prop[k - q] . v1 . prop[k - l]]], SUNTrace[atr[(FVD[l, lorb]*FVD[l, lorz] - MTD[lorb, lorz]*SPD[l]) . v2 . prop[k1 + l] . GAD[lorz] . SUNT[sun] . prop[k1]]]]*FlavorDelta[a2, a1]*FlavorDelta[b1, b2]*FlavorDelta[d1, c1];
+dia1=-(gStrong*SUNTrace[atr[(FVD[l, lorb]*FVD[l, lorz] - MTD[lorb, lorz]*SPD[l]) . v2 . prop[k1 + l] . GAD[lorz] . SUNT[sun] . prop[k1] . v1 . prop[-k + q] . hv3 . prop[-k + l]]]*FAD[l]*FlavorDelta[a2, c1]*FlavorDelta[b1, b2]*FlavorDelta[d1, a1]) + gStrong*SUNTrace[atr[(FVD[l, lorb]*FVD[l, lorz] - MTD[lorb, lorz]*SPD[l]) . v1 . prop[k1 + l] . GAD[lorz] . SUNT[sun] . prop[k1]]]* SUNTrace[atr[hv3 . prop[k - q] . v2 . prop[k - l]]]*FlavorDelta[a2, c1]*FlavorDelta[b1, a1]*FlavorDelta[d1, b2] - gStrong*SUNTrace[atr[(FVD[l, lorb]*FVD[l, lorz] - MTD[lorb, lorz]*SPD[l]) . hv3 . prop[k - q] . v1 . prop[k1 + l] . GAD[lorz] . SUNT[sun] . prop[k1] . v2 . prop[k - l]]]*FAD[l]*FlavorDelta[a2, a1]*FlavorDelta[b1, c1]*FlavorDelta[d1, b2] + gStrong*SUNTrace[atr[hv3 . prop[k - q] . v1 . prop[k - l]]]* SUNTrace[atr[(FVD[l, lorb]*FVD[l, lorz] - MTD[lorb, lorz]*SPD[l]) . v2 . prop[k1 + l] . GAD[lorz] . SUNT[sun] . prop[k1]]]*FlavorDelta[a2, a1]*FlavorDelta[b1, b2]*FlavorDelta[d1, c1];
 
 
 dia1=IntegrateP[dia1,{k1,l,k}]//SUNSimplify;

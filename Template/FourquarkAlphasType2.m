@@ -263,6 +263,7 @@ poles = FourquarkHPole[{v1,{a1,b1}},{v2,{c1,d1}}];
 If[poles===0,
 	0
 ,
+
 	(Plus@@(FourquarkHybridlike1[qq,#[[2]],{v3,v4,{a2,b2,c2,d2}},Pole->#[[1]],EpsOrder->0,AutoNDR->ndr,HoldFlavor->holdf,Parallelized->False]&/@poles))/.{CA-2CF->1/CA,2CA CF-CA^2+1->0}/.CF->(CA^2-1)/(2CA)
 ]
 ]
@@ -274,6 +275,7 @@ poles = FourquarkHPole[{v3,{a2,b2}},{v4,{c2,d2}}];
 If[poles===0,
 	0
 ,
+
 	(Plus@@(FourquarkHybridlike2[qq,{v1,v2,{a1,b1,c1,d1}},#[[2]],Pole->#[[1]],EpsOrder->0,AutoNDR->ndr,HoldFlavor->holdf,Parallelized->False]&/@poles))/.{CA-2CF->1/CA,2CA CF-CA^2+1->0}/.CF->(CA^2-1)/(2CA)
 ]
 ]
