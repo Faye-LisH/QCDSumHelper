@@ -1,6 +1,6 @@
 # Description
 
-This is repository is the copy of ```https://github.com/QSSRHelper/QSSRHelper```, which is unaccessible due to the account is flagged for unknown resaon
+This is repository is the copy of ```https://github.com/QSSRHelper/QSSRHelper```, which is unaccessible due to the account is flagged for unknown reason
 
 ## Install&Usage
 
