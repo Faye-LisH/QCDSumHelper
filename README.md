@@ -1,6 +1,6 @@
 # Description
 
-This is repository is the copy of ```https://github.com/QSSRHelper/QSSRHelper```, which is unaccessible due to the account is flagged for unknown reason
+This repository is the copy of ```https://github.com/QSSRHelper/QSSRHelper```, which is unaccessible due to the account is flagged for unknown reason.
 
 ## Install&Usage
 
@@ -37,10 +37,11 @@ $FAVerbose = 0;
 << QSSRHelper`
 ```
 
-The simplest example, run below code in Mathematica Notebook, two outputs are identical  
+The simplest example, run below code in Mathematica Notebook; two outputs are identical  
 
 ```
-(*propagator in momentum space*)QuarkP[p_] = I   GSD[p]  FAD[p];
+(*propagator in momentum space*)
+QuarkP[p_] = I   GSD[p]  FAD[p];
 GluonP[p_, \[Mu]_, \[Nu]_] = -I   MTD[\[Mu], \[Nu]]  FAD[p];
 
 (*propagator in coordinate space*)
@@ -79,11 +80,12 @@ dia = FourierXP[dia, {x, p}];
 QEvaluate[I   dia   ScaleMu^(2  (4 - D)), p]
 ```
 
-The Documentation is out of date and may useless at this time, the development of this package is far from complete due to the lack of time.
+The Documentation is out of date and may useless now, the development of this package is far from complete due to the lack of time.
 
 ## to do:
 
 - enhance the QSimplify so that it can recongize the color indicex in the Tetraquark current
 - SU(3) flavor decomposition
 - generate diagrams
+- complete the documentation
 
