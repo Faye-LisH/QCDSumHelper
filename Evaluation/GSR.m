@@ -218,17 +218,17 @@ tmp=-1/(2Pi)NIntegrate[s00^(1+nqq)Exp[I(1+nqq)theta](Log[s00/u22]+I (theta-Pi))^
 *)
 (* Im(log^m/s^n) is singular at s=0 ; integrate along |z|=s0 instead *)
 ngsr[{u2_,nq_,nlog_},{ss_,tau_,s0_},tol_]:=Block[{tmp,theta},
-tmp=-1/(2Pi)NIntegrate[s0^(1+nq)Exp[I(1+nq)theta](Log[s0/u2]+I (theta-Pi))^nlog Exp[-(s0 Exp[I theta]-ss)^2/(4 tau)],{theta,0,2Pi}];
+tmp=-1/(2Pi)NIntegrate[I s0^(1+nq)Exp[I(1+nq)theta](Log[s0/u2]+I (theta-Pi))^nlog Exp[-(s0 Exp[I theta]-ss)^2/(4 tau)],{theta,0,2Pi}];
 
-Expand[tmp/Sqrt[4 Pi tau] ]/.Complex[aa_,bb_/;bb<tol]:>aa
+Expand[tmp/Sqrt[4 Pi tau] ]/.Complex[bb_/;bb<tol, aa_]:>aa
 ]/;(nq<0&&nlog>0)
 
 
 (* Integrate[ngsr, {ss, -Infinity, Infinity}] *)
 ngsrn[{u2_,nq_,nlog_},{tau_,s0_},tol_]:=Block[{tmp,theta},
-tmp=-1/(2Pi)NIntegrate[s0^(1+nq)Exp[I(1+nq)theta](Log[s0/u2]+I (theta-Pi))^nlog ,{theta,0,2Pi}];
+tmp=-1/(2Pi)NIntegrate[I s0^(1+nq)Exp[I(1+nq)theta](Log[s0/u2]+I (theta-Pi))^nlog ,{theta,0,2Pi}];
 
-Expand[tmp]/.Complex[aa_,bb_/;bb<tol]:>aa
+Expand[tmp]/.Complex[bb_/;bb<tol, aa_]:>aa
 ]/;(nq<0&&nlog>0)
 
 
@@ -240,7 +240,7 @@ gsrn[{},{tau_,s0_}]=1;
 gsr[{u2_,nq_,1},{ss_,tau_,s0_}]:=Block[{tmp,s,sss,tauu,s00},
 tmp=Integrate[-s^nq Exp[-(s-sss)^2/(4 tauu)],{s,0,s00},Assumptions->{sss>0,tauu>0,s00>0}];
 
-1/Sqrt[4 Pi tau]  tmp/.{sss->ss,tauu->tau,s00->s0}
+1/Sqrt[4 Pi tau] tmp/.{sss->ss,tauu->tau,s00->s0}
 ]/;nq>=0
 
 (* Integrate[ngsr, {ss, -Infinity, Infinity}] *)
@@ -252,7 +252,7 @@ gsrn[{u2_,nq_,1},{tau_,s0_}]:=Block[{tmp,s,sss,tauu,s00},
 gsr[{u2_,nq_,0},{ss_,tau_,s0_}]:=Block[{tmp,s,im,nnq,sss,tauu},
 nnq=-nq;
 (* \[Delta]^n(s) -> \[Delta](s)\[PartialD]_s^(n-1) *)
-tmp=-1/((nnq-1)!)D[Exp[-(s-sss)^2/(4 tauu)],{s,nnq-1}]/.s->0;
+tmp= -1/((nnq-1)!)D[Exp[-(s-sss)^2/(4 tauu)],{s,nnq-1}]/.s->0;
 
 1/Sqrt[4 Pi tau]  tmp/.{sss->ss,tauu->tau}
 ]/;nq<0
