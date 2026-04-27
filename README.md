@@ -35,9 +35,11 @@ Global`$LoadAddOns = {"TARCER", "FeynHelpers"};
 << FeynCalc`
 $FAVerbose = 0;
 << QSSRHelper`
+
+SetOptions[SUNTrace, SUNTraceEvaluate -> True]; (* to ensure the trace evelated correctly *)
 ```
 
-The simplest example, run below code in Mathematica Notebook; two outputs are identical  
+The simplest example, run following code in Mathematica Notebook; two outputs (Fourier Transformation \& Momentum Integral) are identical  
 
 ```
 (*propagator in momentum space*)
@@ -86,6 +88,6 @@ The Documentation is out of date and may useless now, the development of this pa
 
 - enhance the QSimplify so that it can recongize the color indicex in the Tetraquark current
 - SU(3) flavor decomposition
-- generate diagrams
+- generate the diagrams (expressions of integrand) 
 - complete the documentation
 
