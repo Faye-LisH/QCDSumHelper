@@ -20,7 +20,7 @@ Begin["`Private`QTB`"]
 QTB[dim_,mom_,{{v1_Integer,0},{v3_Integer,0}}]:=QTB[dim,mom,{v1,v3}]
 
 QTB[dim_,mom_,{v1_Integer,v3_Integer}]:=Module[{k1,pp,p},
-
+(* here the momentum in TFI notation is abbreviated as p instead of SPD[p] *)
 p=Factor[mom]/.Power[a_,2]:>(a/.{-aa_:>aa,aa_+bb_/;!FreeQ[aa,-1]&&!FreeQ[bb,-1]:>-aa-bb});
 
 (* d^Dk/(2Pi)^D for each loop; TARCER has only an overall factor 1/Pi^D ; there is a prefactor 1/(4Pi)^D for each TFI when doing TryReduce[]. 

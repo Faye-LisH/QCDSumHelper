@@ -1,3 +1,5 @@
+(* ::Package:: *)
+
 (* Wolfram Language package *)
 
 (* Author: ShungHong Li *)
@@ -26,6 +28,7 @@ QTFI[dim_,mom_,{{v1_Integer,0},{v2_Integer,0},{v3_Integer,0},{v4_Integer,0},{v5_
 
 QTFI[expr_Tarcer`TFI]:=Module[{pp,rule},
 
+(* here the momentum in TFI notation is abbreviated as p instead of SPD[p] *)
 pp=Factor[expr[[2]] ]/.Power[a_,2]:>(a/.{-aa_:>aa,aa_+bb_/;!FreeQ[aa,-1]&&!FreeQ[bb,-1]:>-aa-bb});
 
 rule=pp->Pair[Momentum[pp,expr[[1]]],Momentum[pp,expr[[1]]]]^(1/2);

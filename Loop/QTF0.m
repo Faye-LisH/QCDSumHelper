@@ -1,3 +1,5 @@
+(* ::Package:: *)
+
 (* Wolfram Language package *)
 
 (* Author: ShungHong Li *)
@@ -38,7 +40,7 @@ QTF0[dim_,mom_,{{v1_Integer,0},{v2_Integer,0},{v3_Integer,0},{v4_Integer,0},{v5_
 (*-----------------------------*)
 
 qTF0[dim_,mom_,{u_Integer,v_Integer,r_Integer,s_Integer,t_Integer},{v1_Integer,v2_Integer,v3_Integer,v4_Integer,v5_Integer}]/;!FreeQ[{v1,v2,v3,v4,v5},0]:=Module[{tmp,k1,k2,pp,p},
-
+(* here the momentum in TFI notation is abbreviated as p instead of SPD[p] *)
 p=Factor[mom]/.Power[a_,2]:>(a/.{-aa_:>aa,aa_+bb_/;!FreeQ[aa,-1]&&!FreeQ[bb,-1]:>-aa-bb});
 
 tmp=FeynAmpDenominator@@Flatten[{Table[PropagatorDenominator[Momentum[k1,dim],0],v1],Table[PropagatorDenominator[Momentum[k2,dim],0],v2],Table[PropagatorDenominator[Momentum[k1-pp,dim],0],v3],

@@ -1,3 +1,5 @@
+(* ::Package:: *)
+
 (* Wolfram Language package *)
 
 (* Author: ShungHong Li *)
@@ -16,7 +18,7 @@ Begin["`Private`QTJ`"]
 QTJ[dim_,mom_,{{v1_Integer,0},{v5_Integer,0},{v4_Integer,0}}]:=QTJ[dim,mom,{v1,v5,v4}]
 
 QTJ[dim_,mom_,{v1_Integer,v5_Integer,v4_Integer}]:=Module[{k1,k2,pp,p},
-
+(* here the momentum in TFI notation is abbreviated as p instead of SPD[p] *)
 p=Factor[mom]/.Power[a_,2]:>(a/.{-aa_:>aa,aa_+bb_/;!FreeQ[aa,-1]&&!FreeQ[bb,-1]:>-aa-bb});
 
 (* d^Dk/(2Pi)^D for each loop; TARCER has only an overall factor 1/Pi^D ; there is a prefactor 1/(4Pi)^D for each TFI when doing TryReduce[]. times (2Pi)^D/Pi^D to make d^Dk=d^Dk *)

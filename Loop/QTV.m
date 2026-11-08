@@ -1,3 +1,5 @@
+(* ::Package:: *)
+
 (* Wolfram Language package *)
 
 (* Author: ShungHong Li *)
@@ -13,7 +15,7 @@ Begin["`Private`QTV`"]
 QTV[dim_,mom_,{{v5_Integer,0},{v2_Integer,0},{v3_Integer,0},{v4_Integer,0}}]:=QTV[dim,mom,{v5,v2,v3,v4}]
 
 QTV[dim_,mom_,{v5_Integer,v2_Integer,v3_Integer,v4_Integer}]:=Module[{k1,k2,pp,p},
-
+(* here the momentum in TFI notation is abbreviated as p instead of SPD[p] *)
 p=Factor[mom]/.Power[a_,2]:>(a/.{-aa_:>aa,aa_+bb_/;!FreeQ[aa,-1]&&!FreeQ[bb,-1]:>-aa-bb});
 
 
